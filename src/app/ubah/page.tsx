@@ -7,6 +7,7 @@ import { Counter } from '@/components/Counter';
 import { FlowHeader } from '@/components/FlowHeader';
 import { IconAlert, IconArrowRight, IconInfo, IconWand } from '@/components/icons';
 import { IngredientAvatar } from '@/components/IngredientAvatar';
+import { PageShell } from '@/components/PageShell';
 import { useOrder } from '@/context/OrderContext';
 import { INGREDIENTS, INGREDIENT_BY_ID } from '@/lib/data';
 import { formatNumber, formatRupiah } from '@/lib/format';
@@ -24,14 +25,14 @@ export default function UbahPage() {
     return (
       <>
         <FlowHeader title="Ubah" step={3} backHref="/rekomendasi" />
-        <main className="px-4 pt-8">
-          <section className="card text-center">
+        <PageShell className="pt-8">
+          <section className="card mx-auto text-center md:max-w-[560px]">
             <p className="text-[15px] text-gray-600">Belum ada menu yang dipilih.</p>
-            <Link href="/preferensi" className="btn-dark mt-4">
+            <Link href="/preferensi" className="btn-dark mx-auto mt-4">
               Mulai dari Preferensi
             </Link>
           </section>
-        </main>
+        </PageShell>
       </>
     );
   }
@@ -63,9 +64,58 @@ export default function UbahPage() {
     <>
       <FlowHeader title="Ubah" step={3} backHref="/rekomendasi" />
 
-      <main className="space-y-4 px-4 pb-10 pt-4">
+      <PageShell
+        aside={
+          <>
+            <section className="card" aria-live="polite">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-[22px] font-bold text-green-900">Ringkasan baru</h2>
+                <span className="inline-flex items-center gap-1 rounded-full bg-lime-300 px-2.5 py-1 text-[12px] font-bold text-green-900">
+                  <IconWand size={14} />
+                  Live AI
+                </span>
+              </div>
+
+              <dl className="mt-3 space-y-2.5 text-[16px]">
+                <Row label="Kalori">
+                  <span className={lewatKalori ? 'text-rust-600' : ''}>{formatNumber(t.kcal)} kcal</span>
+                  <span className="font-normal text-gray-600"> / {target ? formatNumber(target) : '—'}</span>
+                </Row>
+                <Row label="Protein">
+                  <span className={kurangProtein ? 'text-rust-600' : ''}>{formatNumber(t.protein)} g</span>
+                  <span className="font-normal text-gray-600"> / min {state.minProteinG ?? '—'}</span>
+                </Row>
+                <Row label="Serat">{formatNumber(t.serat)} g</Row>
+                <Row label="Karbo">{formatNumber(t.karbo)} g</Row>
+                <Row label="Lemak">{formatNumber(t.lemak)} g</Row>
+                <Row label="Harga">
+                  <span className={lewatBudget ? 'text-rust-600' : ''}>{formatRupiah(applied.harga)}</span>
+                  <span className="font-normal text-gray-600"> / {budget ? formatNumber(budget) : '—'}</span>
+                </Row>
+              </dl>
+
+              {(lewatKalori || lewatBudget) && (
+                <p role="alert" className="mt-4 flex gap-2 rounded-xl bg-rust-100 px-3 py-2.5 text-[13px] font-medium text-rust-600">
+                  <IconInfo size={18} className="shrink-0" />
+                  Peringatan: tambahan ini melewati{' '}
+                  {lewatKalori && lewatBudget ? 'target kalori dan budget' : lewatKalori ? 'target kalori' : 'budget'}.
+                </p>
+              )}
+
+              <div className="mt-5 space-y-3">
+                <Link href="/checkout" className="btn bg-green-700 text-white shadow-card hover:bg-green-900">
+                  Simpan &amp; Lanjut <IconArrowRight size={20} />
+                </Link>
+                <button type="button" onClick={kembaliKeAI} className="btn-ghost">
+                  Kembali ke rekomendasi AI
+                </button>
+              </div>
+            </section>
+          </>
+        }
+      >
         <section className="card">
-          <h2 className="text-[28px] font-bold leading-tight tracking-[-0.02em] text-green-900">Ubah topping</h2>
+          <h2 className="text-[28px] font-bold leading-tight tracking-[-0.02em] text-green-900 lg:text-[36px]">Ubah topping</h2>
           <p className="mt-1 text-[15px] text-gray-600">Tambah atau kurangi, kami hitung ulang langsung.</p>
           <p className="mt-1 text-[13px] text-gray-600">1 unit = {UNIT_GRAM} g</p>
 
@@ -111,52 +161,7 @@ export default function UbahPage() {
             </button>
           )}
         </section>
-
-        <section className="card" aria-live="polite">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-[22px] font-bold text-green-900">Ringkasan baru</h2>
-            <span className="inline-flex items-center gap-1 rounded-full bg-lime-300 px-2.5 py-1 text-[12px] font-bold text-green-900">
-              <IconWand size={14} />
-              Live AI
-            </span>
-          </div>
-
-          <dl className="mt-3 space-y-2.5 text-[16px]">
-            <Row label="Kalori">
-              <span className={lewatKalori ? 'text-rust-600' : ''}>{formatNumber(t.kcal)} kcal</span>
-              <span className="font-normal text-gray-600"> / {target ? formatNumber(target) : '—'}</span>
-            </Row>
-            <Row label="Protein">
-              <span className={kurangProtein ? 'text-rust-600' : ''}>{formatNumber(t.protein)} g</span>
-              <span className="font-normal text-gray-600"> / min {state.minProteinG ?? '—'}</span>
-            </Row>
-            <Row label="Serat">{formatNumber(t.serat)} g</Row>
-            <Row label="Karbo">{formatNumber(t.karbo)} g</Row>
-            <Row label="Lemak">{formatNumber(t.lemak)} g</Row>
-            <Row label="Harga">
-              <span className={lewatBudget ? 'text-rust-600' : ''}>{formatRupiah(applied.harga)}</span>
-              <span className="font-normal text-gray-600"> / {budget ? formatNumber(budget) : '—'}</span>
-            </Row>
-          </dl>
-
-          {(lewatKalori || lewatBudget) && (
-            <p role="alert" className="mt-4 flex gap-2 rounded-xl bg-rust-100 px-3 py-2.5 text-[13px] font-medium text-rust-600">
-              <IconInfo size={18} className="shrink-0" />
-              Peringatan: tambahan ini melewati{' '}
-              {lewatKalori && lewatBudget ? 'target kalori dan budget' : lewatKalori ? 'target kalori' : 'budget'}.
-            </p>
-          )}
-
-          <div className="mt-5 space-y-3">
-            <Link href="/checkout" className="btn bg-green-700 text-white shadow-card hover:bg-green-900">
-              Simpan &amp; Lanjut <IconArrowRight size={20} />
-            </Link>
-            <button type="button" onClick={kembaliKeAI} className="btn-ghost">
-              Kembali ke rekomendasi AI
-            </button>
-          </div>
-        </section>
-      </main>
+      </PageShell>
     </>
   );
 }

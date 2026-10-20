@@ -16,6 +16,7 @@ import {
   IconSprout,
 } from '@/components/icons';
 import { MenuImage } from '@/components/MenuImage';
+import { PageShell } from '@/components/PageShell';
 import { StatBox } from '@/components/StatBox';
 import { useOrder } from '@/context/OrderContext';
 import { INGREDIENT_BY_ID } from '@/lib/data';
@@ -68,17 +69,60 @@ export default function RekomendasiPage() {
   ];
   const dressing = INGREDIENT_BY_ID[menu.dressingId];
 
+  // Mobile: di antara menu & alternatif. lg: panel kanan sticky.
+  const kriteriaCard = (
+    <section className="card">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="flex items-center gap-2 text-[18px] font-bold text-green-900">
+          <IconCheckCircle size={20} />
+          Sesuai targetmu
+        </h3>
+        <span className="text-[13px] font-medium text-gray-600">
+          {terpenuhi}/{kriteria.length} Kriteria terpenuhi
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {kriteria.map((k) => (
+          <CriteriaBadge key={k.text} ok={k.ok}>
+            {k.text}
+          </CriteriaBadge>
+        ))}
+      </div>
+
+      <div className="mt-6 flex items-end justify-between gap-3">
+        <div>
+          <div className="text-[15px] text-green-900">Total Pembayaran</div>
+          <div className="text-[12px] text-gray-600">Sudah termasuk pajak &amp; dressing</div>
+        </div>
+        <div className="text-right text-[32px] font-extrabold leading-none text-green-900">
+          {formatRupiah(solve.hargaJual)}
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        <Link href="/checkout" className="btn-primary">
+          <IconBag size={20} />
+          Pesan Sekarang
+        </Link>
+        <Link href="/ubah" className="btn bg-gray-200 text-green-900 hover:brightness-95">
+          <IconSliders size={20} />
+          Ubah Topping
+        </Link>
+      </div>
+    </section>
+  );
+
   return (
     <>
       <FlowHeader title="Rekomendasi" step={2} backHref="/preferensi" />
 
-      <main className="space-y-4 px-4 pb-10 pt-4">
+      <PageShell aside={kriteriaCard} asideOnlyDesktop>
         <div>
           <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-green-900">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-lime-300 text-[12px]">2</span>
             Rekomendasi AI terpilih
           </div>
-          <h2 className="mt-2 text-[26px] font-bold leading-tight tracking-[-0.02em] text-green-900">
+          <h2 className="mt-2 text-[26px] font-bold leading-tight tracking-[-0.02em] text-green-900 lg:text-[36px]">
             Ini racikan paling pas buat kamu
           </h2>
         </div>
@@ -86,14 +130,14 @@ export default function RekomendasiPage() {
         {/* Menu utama */}
         <section className="overflow-hidden rounded-card bg-white shadow-card">
           <div className="relative">
-            <MenuImage src={menu.foto} alt={menu.nama} sizes="(max-width: 480px) 100vw, 480px" priority className="aspect-[4/3] w-full" />
+            <MenuImage src={menu.foto} alt={menu.nama} sizes="(max-width: 480px) 100vw, 480px" priority className="aspect-[4/3] w-full lg:aspect-[16/9]" />
             <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-green-900 shadow-card">
               <IconFlame size={15} className="text-rust-600" />
               {formatNumber(t.kcal)} kkal
             </span>
           </div>
 
-          <div className="p-5">
+          <div className="p-5 lg:p-7">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <h3 className="min-w-0 flex-1 text-[22px] font-bold leading-tight text-green-900">{menu.nama}</h3>
               {showScore && (
@@ -103,7 +147,7 @@ export default function RekomendasiPage() {
                 </span>
               )}
             </div>
-            <p className="mt-1 text-[14px] text-gray-600">{menu.deskripsi}</p>
+            <p className="mt-1 text-[14px] text-gray-600 md:max-w-[60ch]">{menu.deskripsi}</p>
 
             <div className="mt-4 grid grid-cols-4 gap-2">
               <StatBox label="Protein" value={`${formatNumber(t.protein)}g`} />
@@ -141,46 +185,7 @@ export default function RekomendasiPage() {
           </div>
         </section>
 
-        {/* Kriteria + total */}
-        <section className="card">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="flex items-center gap-2 text-[18px] font-bold text-green-900">
-              <IconCheckCircle size={20} />
-              Sesuai targetmu
-            </h3>
-            <span className="text-[13px] font-medium text-gray-600">
-              {terpenuhi}/{kriteria.length} Kriteria terpenuhi
-            </span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {kriteria.map((k) => (
-              <CriteriaBadge key={k.text} ok={k.ok}>
-                {k.text}
-              </CriteriaBadge>
-            ))}
-          </div>
-
-          <div className="mt-6 flex items-end justify-between gap-3">
-            <div>
-              <div className="text-[15px] text-green-900">Total Pembayaran</div>
-              <div className="text-[12px] text-gray-600">Sudah termasuk pajak &amp; dressing</div>
-            </div>
-            <div className="text-right text-[32px] font-extrabold leading-none text-green-900">
-              {formatRupiah(solve.hargaJual)}
-            </div>
-          </div>
-
-          <div className="mt-5 space-y-3">
-            <Link href="/checkout" className="btn-primary">
-              <IconBag size={20} />
-              Pesan Sekarang
-            </Link>
-            <Link href="/ubah" className="btn bg-gray-200 text-green-900 hover:brightness-95">
-              <IconSliders size={20} />
-              Ubah Topping
-            </Link>
-          </div>
-        </section>
+        <div className="lg:hidden">{kriteriaCard}</div>
 
         {/* Alternatif */}
         {alternatif.length > 0 && (
@@ -189,7 +194,7 @@ export default function RekomendasiPage() {
               <IconShuffle size={20} />
               Alternatif lain
             </h3>
-            <ul className="mt-3 space-y-3">
+            <ul className="mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
               {alternatif.map((alt) => (
                 <li key={alt.menu.id}>
                   <AlternatifCard
@@ -205,7 +210,7 @@ export default function RekomendasiPage() {
             </ul>
           </section>
         )}
-      </main>
+      </PageShell>
     </>
   );
 }
@@ -215,7 +220,7 @@ function AlternatifCard({ alt, showScore, onPick }: { alt: ScoredMenu; showScore
     <button
       type="button"
       onClick={onPick}
-      className="flex w-full items-center gap-3 rounded-2xl bg-cream-50 p-3 text-left transition-colors hover:bg-green-100"
+      className="flex h-full w-full items-center gap-3 rounded-2xl bg-cream-50 p-3 text-left transition-colors hover:bg-green-100"
       aria-label={`Pilih ${alt.menu.nama}`}
     >
       <MenuImage src={alt.menu.foto} alt={alt.menu.nama} sizes="72px" compact className="h-[72px] w-[72px] shrink-0 rounded-xl" />
@@ -236,8 +241,8 @@ function AlternatifCard({ alt, showScore, onPick }: { alt: ScoredMenu; showScore
 
 function EmptyState() {
   return (
-    <main className="px-4 pb-10 pt-8">
-      <section className="card text-center">
+    <PageShell className="pb-10 pt-8">
+      <section className="card mx-auto text-center md:max-w-[560px]">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rust-100 text-rust-600">
           <IconSprout size={30} />
         </div>
@@ -245,10 +250,10 @@ function EmptyState() {
         <p className="mt-2 text-[15px] text-gray-600">
           Belum ada menu yang cocok dengan pantanganmu. Coba longgarkan satu pantangan atau naikkan budget.
         </p>
-        <Link href="/preferensi" className="btn-dark mt-6">
+        <Link href="/preferensi" className="btn-dark mx-auto mt-6">
           Kembali ke Preferensi
         </Link>
       </section>
-    </main>
+    </PageShell>
   );
 }

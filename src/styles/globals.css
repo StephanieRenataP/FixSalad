@@ -29,10 +29,10 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-card bg-white p-5 shadow-card;
+    @apply rounded-card bg-white p-5 shadow-card lg:p-7;
   }
   .btn {
-    @apply flex h-14 w-full items-center justify-center gap-2 rounded-btn px-5 text-[16px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-14 w-full items-center justify-center gap-2 rounded-btn px-5 text-[16px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 lg:max-w-[360px];
   }
   .btn-primary {
     @apply btn bg-rust-600 text-white shadow-cta hover:brightness-110;

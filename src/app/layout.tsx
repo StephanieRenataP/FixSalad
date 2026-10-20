@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import { SiteNav } from '@/components/SiteNav';
 import { OrderProvider } from '@/context/OrderContext';
 import '@/styles/globals.css';
 
@@ -26,7 +27,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id" className={jakarta.variable}>
       <body className="font-sans antialiased">
         <OrderProvider>
-          <div className="mx-auto min-h-screen w-full max-w-app bg-cream-50 shadow-[0_0_24px_rgba(20,67,42,0.08)]">
+          <div className="mx-auto min-h-screen w-full max-w-app bg-cream-50 shadow-[0_0_24px_rgba(20,67,42,0.08)] md:max-w-none md:shadow-none">
+            <SiteNav />
             {children}
           </div>
         </OrderProvider>

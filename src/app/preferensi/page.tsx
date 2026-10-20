@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Chip } from '@/components/Chip';
 import { FlowHeader } from '@/components/FlowHeader';
+import { PageShell } from '@/components/PageShell';
 import {
   IconBrain,
   IconCheckCircle,
@@ -130,13 +131,56 @@ export default function PreferensiPage() {
     <>
       <FlowHeader title="Preferensi" step={1} backHref="/" />
 
-      <main className="space-y-4 px-4 pb-10 pt-4">
+      <PageShell
+        aside={
+          <>
+            {/* Ringkasan live */}
+            <section className="rounded-card bg-green-700 p-5 text-white shadow-card lg:p-7" aria-live="polite">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="flex items-center gap-2 text-[18px] font-bold">
+                  <IconClipboard size={20} className="text-lime-300" />
+                  Ringkasan inputmu
+                </h2>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold ${
+                    canSubmit ? 'bg-lime-300 text-green-900' : 'bg-white/15 text-white/80'
+                  }`}
+                >
+                  {canSubmit ? 'AI Ready' : 'Belum lengkap'}
+                </span>
+              </div>
+              <p className="mt-3 text-[17px] font-bold leading-snug">{ringkasanAtas}</p>
+              <p className="mt-1 text-[15px] leading-snug text-white/65">{ringkasanBawah}</p>
+              <p className="mt-3 flex gap-2 text-[13px] leading-snug text-white/65">
+                <IconBrain size={18} className="shrink-0 text-lime-300" />
+                AI memilih bahan sendiri. Kamu tidak perlu menyusun satu per satu.
+              </p>
+            </section>
+
+            <div className="flex items-center justify-between gap-2 px-1 pt-1 text-[12px] font-medium text-gray-600">
+              <span className="flex items-center gap-1.5">
+                <IconCheckCircle size={18} className="text-lime-300" /> 100% Organik
+              </span>
+              <span className="h-1 w-1 rounded-full bg-gray-600/50" aria-hidden="true" />
+              <span className="flex items-center gap-1.5">
+                <IconFlame size={18} className="text-rust-600" /> Kalori Terhitung
+              </span>
+              <span className="h-1 w-1 rounded-full bg-gray-600/50" aria-hidden="true" />
+              <span className="flex items-center gap-1.5">
+                <IconLeaf size={18} className="text-green-700" /> Eco-Packaging
+              </span>
+            </div>
+          </>
+        }
+      >
         <section className="card">
-          <h2 className="text-[28px] font-bold leading-tight tracking-[-0.02em] text-green-900">Ceritakan kebutuhanmu</h2>
+          <h2 className="text-[28px] font-bold leading-tight tracking-[-0.02em] text-green-900 lg:text-[36px]">
+            Ceritakan kebutuhanmu
+          </h2>
           <p className="mt-1 text-[15px] text-gray-600">Sesuaikan porsi, pantangan, dan cita rasa favoritmu.</p>
 
           {/* Pill tab — bukan screen baru, tidak mengubah URL. SPEC.md §7.2 */}
-          <div role="tablist" aria-label="Cara menentukan target" className="mt-5 grid grid-cols-2 gap-2">
+          <div role="tablist" aria-label="Cara menentukan target" className="mt-5 grid grid-cols-2 gap-2 md:max-w-[480px]">
             {TABS.map((t) => {
               const selected = state.mode === t.mode;
               return (
@@ -364,50 +408,13 @@ export default function PreferensiPage() {
               Racik Menu Saya <IconSparkle size={20} />
             </button>
             {!canSubmit && (
-              <p className="-mt-2 text-center text-[13px] text-gray-600">
+              <p className="-mt-2 text-center text-[13px] text-gray-600 lg:max-w-[360px]">
                 Lengkapi tujuan, target kalori, protein, budget, dan bentuk.
               </p>
             )}
           </div>
         </section>
-
-        {/* Ringkasan live */}
-        <section className="rounded-card bg-green-700 p-5 text-white shadow-card" aria-live="polite">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="flex items-center gap-2 text-[18px] font-bold">
-              <IconClipboard size={20} className="text-lime-300" />
-              Ringkasan inputmu
-            </h2>
-            <span
-              className={`shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold ${
-                canSubmit ? 'bg-lime-300 text-green-900' : 'bg-white/15 text-white/80'
-              }`}
-            >
-              {canSubmit ? 'AI Ready' : 'Belum lengkap'}
-            </span>
-          </div>
-          <p className="mt-3 text-[17px] font-bold leading-snug">{ringkasanAtas}</p>
-          <p className="mt-1 text-[15px] leading-snug text-white/65">{ringkasanBawah}</p>
-          <p className="mt-3 flex gap-2 text-[13px] leading-snug text-white/65">
-            <IconBrain size={18} className="shrink-0 text-lime-300" />
-            AI memilih bahan sendiri. Kamu tidak perlu menyusun satu per satu.
-          </p>
-        </section>
-
-        <div className="flex items-center justify-between gap-2 px-1 pt-1 text-[12px] font-medium text-gray-600">
-          <span className="flex items-center gap-1.5">
-            <IconCheckCircle size={18} className="text-lime-300" /> 100% Organik
-          </span>
-          <span className="h-1 w-1 rounded-full bg-gray-600/50" aria-hidden="true" />
-          <span className="flex items-center gap-1.5">
-            <IconFlame size={18} className="text-rust-600" /> Kalori Terhitung
-          </span>
-          <span className="h-1 w-1 rounded-full bg-gray-600/50" aria-hidden="true" />
-          <span className="flex items-center gap-1.5">
-            <IconLeaf size={18} className="text-green-700" /> Eco-Packaging
-          </span>
-        </div>
-      </main>
+      </PageShell>
     </>
   );
 }

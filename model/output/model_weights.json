@@ -1,0 +1,61 @@
+{
+  "model_type": "logistic_regression",
+  "within_group_centering": true,
+  "feature_names": [
+    "calorie_gap",
+    "protein_surplus",
+    "price_ratio",
+    "flavor_match",
+    "goal_match",
+    "form_match",
+    "sodium_ratio",
+    "fiber_density",
+    "protein_density"
+  ],
+  "scaler_mean": [
+    0.0,
+    0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    0.0,
+    -0.0
+  ],
+  "scaler_scale": [
+    0.093221,
+    0.295786,
+    0.168007,
+    0.450717,
+    0.441375,
+    0.469816,
+    0.219173,
+    0.237764,
+    1.643776
+  ],
+  "coefficients": [
+    -0.572781,
+    0.522732,
+    -0.191504,
+    1.722277,
+    1.417911,
+    0.761758,
+    -0.844102,
+    -0.124918,
+    0.095453
+  ],
+  "intercept": -1.107059,
+  "metrics": {
+    "top1_accuracy": 0.7233,
+    "top1_accuracy_baseline": 0.6541,
+    "top1_accuracy_tanpa_centering": 0.7044,
+    "roc_auc": 0.9126,
+    "sign_recovery": "8/9"
+  },
+  "n_users": 795,
+  "n_rows": 3447,
+  "trained_at": "2026-10-20",
+  "data_source": "synthetic",
+  "catatan": "PENTING: fitur harus di-center terhadap rata-rata kandidat menu user SEBELUM distandardisasi. Lihat SPEC.md section 4.7. Dilatih pada data sintetis — model memulihkan aturan generator, tidak menemukan preferensi manusia nyata (SPEC.md section 4.4)."
+}
