@@ -1,0 +1,6 @@
+menu_id,nama_menu,bentuk,base_ids,protein_ids,topping_ids,dressing_id,tag_rasa,cocok_untuk,foto_url,deskripsi
+M01,Spicy Chicken Protein Bowl,bowl,B01,P01|P02,T05|T06|T01,D03,pedas,high_protein|bulking,https://images.unsplash.com/photo-1676300186659-030de568e39a,Dada ayam panggang dan telur rebus dengan edamame dan jagung manis. Pilihan protein tertinggi.
+M02,Smoked Beef Avocado Bowl,bowl,B02,P03|P02,T10|T04|T01,D04,segar,defisit_kalori|high_protein,https://images.unsplash.com/photo-1543339308-43e59d6b73a6,Smoked beef lada hitam dan telur rebus dengan alpukat dan paprika. Rendah karbohidrat dan kaya lemak sehat.
+M03,Tofu Tempeh Fiber Wrap,wrap,B05|B03,P05|P06,T03|T01,D02,gurih,defisit_kalori|rendah_garam,https://images.unsplash.com/photo-1631021967255-898a52176fea,Tempe dan tahu panggang dengan kol ungu dan wortel. Plant-based dan tinggi serat.
+M04,Tuna Garden Fresh Bowl,bowl,B01|B04,P04,T02|T01|T05,D01,segar,high_protein|defisit_kalori,https://images.unsplash.com/photo-1622756144420-6877b1b7476e,"Tuna dengan nasi merah, tomat ceri, dan timun. Segar, mengenyangkan, tinggi protein."
+M05,Classic Chicken Caesar Wrap,wrap,B05|B01,P01,T12|T07|T01,D01,gurih,bulking|high_protein,https://images.unsplash.com/photo-1632660346941-023cc64e1252,Dada ayam panggang dengan keju parut dan bawang bombay dalam tortilla gandum.

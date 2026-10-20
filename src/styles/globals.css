@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --green-900: #14432a; /* headline, tombol gelap, nav aktif */
+  --green-700: #1e6340;
+  --green-100: #e8f3ea; /* background chip tidak aktif */
+  --lime-300: #c5ef6b; /* badge "Cocok 100%", "AI Ready" */
+  --rust-600: #b53a10; /* CTA utama, angka harga, warning */
+  --rust-100: #fdebe4; /* background warning box */
+  --cream-50: #f7f7f2; /* background halaman */
+  --white: #ffffff; /* background card */
+  --gray-600: #5a6b5f; /* teks sekunder */
+  --gray-200: #e5e7e3; /* border, divider */
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--gray-200);
+  color: var(--green-900);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .card {
+    @apply rounded-card bg-white p-5 shadow-card;
+  }
+  .btn {
+    @apply flex h-14 w-full items-center justify-center gap-2 rounded-btn px-5 text-[16px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-rust-600 text-white shadow-cta hover:brightness-110;
+  }
+  .btn-dark {
+    @apply btn bg-green-900 text-white hover:bg-green-700;
+  }
+  .btn-soft {
+    @apply btn bg-green-100 text-green-900 hover:brightness-95;
+  }
+  .btn-ghost {
+    @apply btn bg-white text-green-900 shadow-card hover:bg-cream-50;
+  }
+  .field {
+    @apply flex h-14 w-full items-center gap-2 rounded-btn bg-cream-50 px-4 text-[18px] font-bold text-green-900 ring-1 ring-transparent focus-within:ring-green-700;
+  }
+  .field input,
+  .field select {
+    @apply w-full min-w-0 bg-transparent outline-none;
+  }
+  .label {
+    @apply mb-2 block text-label text-green-900;
+  }
+}

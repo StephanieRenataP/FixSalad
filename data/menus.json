@@ -1,0 +1,127 @@
+[
+  {
+    "id": "M01",
+    "nama": "Spicy Chicken Protein Bowl",
+    "bentuk": "bowl",
+    "baseIds": [
+      "B01"
+    ],
+    "proteinIds": [
+      "P01",
+      "P02"
+    ],
+    "toppingIds": [
+      "T05",
+      "T06",
+      "T01"
+    ],
+    "dressingId": "D03",
+    "tagRasa": "pedas",
+    "cocokUntuk": [
+      "high_protein",
+      "bulking"
+    ],
+    "deskripsi": "Dada ayam panggang dan telur rebus dengan edamame dan jagung manis. Pilihan protein tertinggi.",
+    "foto": "https://images.unsplash.com/photo-1676300186659-030de568e39a?w=800&q=80&auto=format&fit=crop"
+  },
+  {
+    "id": "M02",
+    "nama": "Smoked Beef Avocado Bowl",
+    "bentuk": "bowl",
+    "baseIds": [
+      "B02"
+    ],
+    "proteinIds": [
+      "P03",
+      "P02"
+    ],
+    "toppingIds": [
+      "T10",
+      "T04",
+      "T01"
+    ],
+    "dressingId": "D04",
+    "tagRasa": "segar",
+    "cocokUntuk": [
+      "defisit_kalori",
+      "high_protein"
+    ],
+    "deskripsi": "Smoked beef lada hitam dan telur rebus dengan alpukat dan paprika. Rendah karbohidrat dan kaya lemak sehat.",
+    "foto": "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800&q=80&auto=format&fit=crop"
+  },
+  {
+    "id": "M03",
+    "nama": "Tofu Tempeh Fiber Wrap",
+    "bentuk": "wrap",
+    "baseIds": [
+      "B05",
+      "B03"
+    ],
+    "proteinIds": [
+      "P05",
+      "P06"
+    ],
+    "toppingIds": [
+      "T03",
+      "T01"
+    ],
+    "dressingId": "D02",
+    "tagRasa": "gurih",
+    "cocokUntuk": [
+      "defisit_kalori",
+      "rendah_garam"
+    ],
+    "deskripsi": "Tempe dan tahu panggang dengan kol ungu dan wortel. Plant-based dan tinggi serat.",
+    "foto": "https://images.unsplash.com/photo-1631021967255-898a52176fea?w=800&q=80&auto=format&fit=crop"
+  },
+  {
+    "id": "M04",
+    "nama": "Tuna Garden Fresh Bowl",
+    "bentuk": "bowl",
+    "baseIds": [
+      "B01",
+      "B04"
+    ],
+    "proteinIds": [
+      "P04"
+    ],
+    "toppingIds": [
+      "T02",
+      "T01",
+      "T05"
+    ],
+    "dressingId": "D01",
+    "tagRasa": "segar",
+    "cocokUntuk": [
+      "high_protein",
+      "defisit_kalori"
+    ],
+    "deskripsi": "Tuna dengan nasi merah, tomat ceri, dan timun. Segar, mengenyangkan, tinggi protein.",
+    "foto": "https://images.unsplash.com/photo-1622756144420-6877b1b7476e?w=800&q=80&auto=format&fit=crop"
+  },
+  {
+    "id": "M05",
+    "nama": "Classic Chicken Caesar Wrap",
+    "bentuk": "wrap",
+    "baseIds": [
+      "B05",
+      "B01"
+    ],
+    "proteinIds": [
+      "P01"
+    ],
+    "toppingIds": [
+      "T12",
+      "T07",
+      "T01"
+    ],
+    "dressingId": "D01",
+    "tagRasa": "gurih",
+    "cocokUntuk": [
+      "bulking",
+      "high_protein"
+    ],
+    "deskripsi": "Dada ayam panggang dengan keju parut dan bawang bombay dalam tortilla gandum.",
+    "foto": "https://images.unsplash.com/photo-1632660346941-023cc64e1252?w=800&q=80&auto=format&fit=crop"
+  }
+]
