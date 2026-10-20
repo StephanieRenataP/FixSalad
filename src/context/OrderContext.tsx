@@ -1,25 +1,24 @@
 'use client';
 
 import { createContext, useContext, useMemo, useReducer, type Dispatch, type ReactNode } from 'react';
-import { DUMMY_REKOMENDASI, DUMMY_TARGET } from '@/lib/dummy';
 import type { OrderAction, OrderState } from '@/lib/types';
 
-// TODO(sesi 2): kosongkan rekomendasi/menuTerpilih dan nilai target dummy —
-// isinya akan datang dari planner + solver + ranker.
+// Target kalori/protein diisi planner (atau user, di mode "Saya tahu targetnya");
+// rekomendasi diisi recommend() saat user menekan "Racik Menu Saya".
 export const initialState: OrderState = {
   mode: 'hitung',
   bodyData: null,
 
-  tujuan: 'high_protein',
-  targetKcal: DUMMY_TARGET.targetKcal,
-  minProteinG: DUMMY_TARGET.minProteinG,
+  tujuan: null,
+  targetKcal: null,
+  minProteinG: null,
   tidakSuka: [],
   preferensiRasa: null,
-  budget: DUMMY_TARGET.budget,
+  budget: null,
   bentuk: null,
 
-  rekomendasi: DUMMY_REKOMENDASI,
-  menuTerpilih: DUMMY_REKOMENDASI[0],
+  rekomendasi: null,
+  menuTerpilih: null,
   toppingTambahan: {},
 
   waktuAmbil: 'Secepatnya (~15–20 mnt)',

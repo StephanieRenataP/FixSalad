@@ -486,7 +486,7 @@ Ini jenis bug yang tidak terlihat dari kode — hanya muncul saat solver dijalan
 
 ## 6. Desain & Design Tokens
 
-Diambil dari `FixSalad_Mobile_Prototype.pdf`. **Mobile-first** — prototype dibuat untuk mobile; desktop hanya perlu center container dengan `max-width: 480px`.
+Token warna & tipografi diambil dari `FixSalad_Mobile_Prototype.pdf`. **Layout-nya tidak** — lihat §6.3b. Prototype adalah acuan visual (warna, bentuk, hierarki), bukan acuan lebar halaman.
 
 ### 6.1 Warna
 
@@ -516,12 +516,31 @@ Diambil dari `FixSalad_Mobile_Prototype.pdf`. **Mobile-first** — prototype dib
 
 ### 6.3 Bentuk & spacing
 
-- Card: `border-radius: 20px`, `padding: 20px`, `background: white`
+- Card: `border-radius: 20px`, `padding: 20px` (mobile) / `28px` (desktop), `background: white`
 - Chip / pill: `border-radius: 999px`, `padding: 10px 18px`
 - Tombol: `border-radius: 14px`, `height: 56px`, `font-weight: 700`
-- Jarak antar card: `16px`
-- Padding halaman: `16px`
+- Jarak antar card: `16px` (mobile) / `24px` (desktop)
+- Padding halaman: `16px` (mobile) / `32px` (desktop)
 - Shadow card: `0 1px 3px rgba(20,67,42,0.06)`
+
+### 6.3b Breakpoint & grid
+
+**Ini adalah website, bukan aplikasi mobile.** Prototype PDF dibuat di viewport mobile hanya untuk mengkomunikasikan konsep desain — bukan instruksi untuk mengunci lebar halaman. Di desktop, layout harus memakai lebar layar, bukan menampilkan kolom 480 px di tengah layar kosong.
+
+| Breakpoint | Lebar | Layout | Navigasi |
+|---|---|---|---|
+| `sm` | < 768 px | Satu kolom, padding 16 px | Bottom nav (fixed) |
+| `md` | 768–1023 px | Satu kolom, `max-width: 680px`, terpusat | Top nav |
+| `lg` | ≥ 1024 px | **Dua kolom**, `max-width: 1200px`, terpusat | Top nav |
+
+Aturan:
+- Container konten: `max-width: 1200px; margin-inline: auto;` — **bukan** 480 px.
+- Section hero boleh full-bleed (background selebar layar), isinya tetap dibatasi 1200 px.
+- Tombol CTA **tidak** melebar penuh di desktop. Batasi `max-width: 360px` saat `lg`.
+- Teks panjang jangan melebihi ~70 karakter per baris. Paragraf di desktop dibatasi `max-width: 60ch`.
+- Grid dua kolom standar: `grid-template-columns: 1fr 380px; gap: 24px;` — konten utama kiri, panel ringkasan kanan.
+- Panel kanan `position: sticky; top: 88px;` supaya ringkasan tetap terlihat saat scroll.
+- Ukuran font headline naik di desktop: 32 px → 44 px untuk `lg`.
 
 ### 6.4 Komponen berulang
 
@@ -532,7 +551,27 @@ Diambil dari `FixSalad_Mobile_Prototype.pdf`. **Mobile-first** — prototype dib
 | `<StatBox>` — label kecil di atas, angka besar di bawah | Rekomendasi, Landing |
 | `<CriteriaBadge>` — ✓ + teks, bg lime-300 (ok) / rust-100 (gagal) | Rekomendasi |
 | `<Counter>` — − angka + | Ubah Topping |
-| `<BottomNav>` — 4 ikon: Menu, Rakit, Pesanan, Nutrisi | Landing |
+| `<SiteNav>` — 4 tujuan: Menu, Rakit, Pesanan, Nutrisi. **Satu komponen, dua tampilan** | Semua screen |
+
+**`<SiteNav>`** menggantikan `<BottomNav>`. Satu sumber data rute, dua rendering:
+
+| Viewport | Tampilan |
+|---|---|
+| < 768 px | Bar tetap di bawah layar, 4 ikon + label, seperti prototype |
+| ≥ 768 px | Header atas: logo kiri, 4 link teks kanan. Bottom bar disembunyikan |
+
+Rute (semuanya **harus berfungsi** — tidak ada yang dekoratif):
+
+| Item | Rute | Catatan |
+|---|---|---|
+| Menu | `/` | Landing |
+| Rakit | `/preferensi` | Masuk ke order flow |
+| Pesanan | `/pesanan` | Riwayat pesanan sesi ini (§7.7) |
+| Nutrisi | `/nutrisi` | Info gizi menu & bahan (§7.8) |
+
+Item aktif ditandai: ikon + label `--green-900` dan bold; sisanya `--gray-600`. Tentukan dari `usePathname()`.
+
+**Ikon profil di kanan atas: dihapus.** Tidak ada login atau signup di produk ini, jadi ikon itu tidak menuju ke mana-mana. Ikon yang tidak bisa diklik mengundang penguji mengkliknya dan menemukan tombol mati. Header mobile cukup berisi logo saja; header desktop berisi logo + nav.
 
 ### 6.5 Gambar
 
@@ -566,6 +605,24 @@ images: { remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com' 
 ## 7. Screen
 
 Stepper tetap **4 langkah** seperti prototype. Data Diri **bukan** screen terpisah — ia adalah mode di dalam screen Preferensi. Ini menjaga desain yang sudah dibuat dan mengurangi pekerjaan.
+
+### 7.0 Layout desktop per screen
+
+Di `lg` (≥1024 px) tiap screen memakai grid `1fr 380px`. Yang berubah hanya susunannya — **tidak ada komponen baru, tidak ada warna baru**. Mobile tetap satu kolom persis seperti prototype.
+
+| Screen | Kolom kiri | Kolom kanan (sticky) |
+|---|---|---|
+| `/` Landing | Hero (headline + CTA) | Card "Rekomendasi untukmu" |
+| `/preferensi` | Form preferensi | Card "Ringkasan inputmu" |
+| `/rekomendasi` | Foto + breakdown bahan | "Sesuai targetmu" + total + CTA |
+| `/ubah` | Daftar topping | "Ringkasan baru" + CTA |
+| `/checkout` | Form pickup & pembayaran | Card "Pesananmu" + total |
+| `/sukses` | — kolom tunggal, `max-width: 560px`, terpusat | — |
+| `/pesanan` | Daftar pesanan, grid 2 kolom | — |
+| `/nutrisi` | Tabel lebar penuh | — |
+
+Section "Tiga langkah gampang" di landing: 1 kolom di mobile → **3 kolom sejajar** di `lg`.
+Section "Alternatif lain" di `/rekomendasi`: tumpuk di mobile → **2 kolom** di `lg`.
 
 ### 7.1 Landing — `/`
 
@@ -700,7 +757,47 @@ Screen baru (tidak ada di prototype, tapi dibutuhkan).
 - **Kode pesanan besar**: `FS-4821` (generate: `FS-` + 4 digit acak)
 - QRIS mockup: gambar QR statis + teks "Tunjukkan kode ini ke kasir"
 - Ringkasan: nama menu, total, waktu ambil
-- Tombol "Pesan lagi" → reset state → `/`
+- Tombol "Pesan lagi" → reset state order (bukan riwayat) → `/`
+- Tombol sekunder "Lihat pesanan saya" → `/pesanan`
+
+Saat masuk screen ini, pesanan **disimpan ke riwayat** (§8.2).
+
+---
+
+### 7.7 Pesanan — `/pesanan`
+
+Riwayat pesanan yang sudah di-checkout.
+
+**Ada pesanan:** daftar kartu, terbaru di atas. Tiap kartu berisi kode pesanan, nama menu, foto kecil, ringkasan gizi (`{kcal} kkal · {protein} g protein`), total harga, waktu ambil, dan timestamp. Di `lg` tampil sebagai grid 2 kolom.
+
+**Belum ada pesanan:** empty state — ilustrasi/ikon sederhana, teks *"Belum ada pesanan. Racik menu pertamamu dulu."*, dan tombol **"Mulai Personalisasi →"** menuju `/preferensi`.
+
+> **Catatan: ini sedikit berbeda dari permintaan.** Permintaannya adalah redirect langsung ke `/preferensi` kalau belum ada pesanan. Saya pakai empty state dengan tombol besar, bukan redirect otomatis, karena menekan "Pesanan" lalu tiba-tiba mendarat di halaman "Preferensi" tanpa penjelasan membuat menu nav itu terlihat rusak — penguji akan mengira salah klik. Empty state mencapai tujuan yang sama (mengarahkan user ke order flow) dengan satu klik, tapi user paham kenapa. Kalau Ren tetap mau redirect otomatis, ganti satu baris: `useEffect(() => { if (!orders.length) router.replace('/preferensi') }, [])`.
+
+---
+
+### 7.8 Nutrisi — `/nutrisi`
+
+Halaman informasi gizi. Statis, tidak bergantung input user.
+
+**Tiga bagian:**
+
+**(a) Tabel bahan** — 27 bahan dari `ingredients.json`, nilai **per 100 g**: nama, kategori, kkal, protein, karbo, lemak, serat, natrium. Dikelompokkan per kategori (Base / Protein / Topping / Dressing), dengan heading per grup. Di mobile tabel di-scroll horizontal dalam container `overflow-x: auto`; jangan dipaksa mengecil sampai tidak terbaca.
+
+Bahan yang punya `exclusionTag` diberi chip kecil di sebelah namanya (mis. "mengandung dairy") — ini membuat halaman berguna untuk user yang punya pantangan.
+
+**(b) Profil gizi tiap menu** — 5 kartu menu dengan komposisi gizi **pada porsi referensi 500 kkal**. Hitung dengan memanggil `solvePortions(menu, 500, 30, 50000)` saat build/render.
+
+> Label wajib di atas bagian ini: *"Nilai gizi di bawah dihitung pada porsi referensi 500 kkal. Porsi aktual menyesuaikan target kalori dan proteinmu."* Tanpa label ini angkanya menyesatkan — porsi FixSalad memang berubah per user, itu inti produknya.
+
+**(c) Cara kami menghitung** — penjelasan singkat, 3 paragraf pendek:
+1. Rumus Mifflin-St Jeor dan faktor aktivitas (§2.2, §2.3) — satu paragraf, tanpa notasi matematika berat
+2. Tabel 4 tujuan: pengali kalori, protein per kg, batas natrium (ambil dari §2.4)
+3. Disclaimer: *"Estimasi berdasarkan rumus standar. Angka aktual bisa berbeda ±15%. Bukan pengganti saran ahli gizi."*
+
+Bagian (c) ini bernilai lebih dari sekadar konten halaman — saat demo, ia menunjukkan bahwa "AI" di produk ini punya dasar perhitungan yang bisa ditunjuk, bukan sekadar klaim pemasaran.
+
+**Prioritas:** `/nutrisi` adalah satu-satunya tambahan yang benar-benar baru (sisanya koreksi). Kerjakan **paling akhir**. Kalau waktu habis, bagian (a) saja sudah cukup — (b) dan (c) bisa dipotong tanpa merusak apa pun.
 
 ---
 
@@ -731,10 +828,52 @@ type OrderState = {
   // Checkout
   waktuAmbil: string;
   kodePesanan: string | null;
+
+  // Riwayat (§8.2)
+  orders: Order[];
+};
+
+type Order = {
+  kode: string;             // "FS-4821"
+  namaMenu: string;
+  foto: string;
+  kcal: number;
+  protein: number;
+  total: number;
+  waktuAmbil: string;
+  dibuatPada: string;       // ISO timestamp
 };
 ```
 
-**Penting:** state hilang saat refresh. Itu dapat diterima untuk prototype demo. **Jangan** pakai localStorage — menambah titik gagal tanpa manfaat untuk demo 3 hari.
+**State order aktif hilang saat refresh.** Itu dapat diterima untuk prototype demo — isi form bukan sesuatu yang perlu bertahan.
+
+### 8.2 Riwayat pesanan — pengecualian localStorage
+
+Spec versi awal melarang localStorage sepenuhnya. **Aturan itu dicabut untuk riwayat pesanan saja**, karena halaman `/pesanan` tidak ada gunanya tanpanya: user checkout, menekan "Pesanan", refresh, lalu riwayatnya kosong — terlihat seperti bug, dan saat demo akan ditanya.
+
+Aturan pemakaian:
+
+```ts
+const KEY = 'fixsalad_orders';
+
+function loadOrders(): Order[] {
+  try { return JSON.parse(localStorage.getItem(KEY) ?? '[]'); }
+  catch { return []; }          // private mode, storage diblokir, JSON rusak
+}
+
+function saveOrder(o: Order): void {
+  try {
+    const next = [o, ...loadOrders()].slice(0, 20);
+    localStorage.setItem(KEY, JSON.stringify(next));
+  } catch { /* abaikan — riwayat tetap jalan dari state React sesi ini */ }
+}
+```
+
+- **Semua akses dibungkus try/catch.** Di private mode atau saat site data diblokir, pembacaan bisa melempar error. Halaman harus tetap render.
+- Baca localStorage **hanya di dalam `useEffect`**, tidak saat render. Mengaksesnya saat render menyebabkan hydration mismatch di Next.js, dan error itu muncul sebagai halaman putih.
+- Batasi 20 pesanan terakhir.
+- Tulis saat masuk `/sukses`, bukan saat klik "Bayar Sekarang" — supaya pesanan yang gagal tidak tercatat.
+- Tetap **jangan** pakai localStorage untuk apa pun yang lain: input form, preferensi, menu terpilih. Semua itu tetap di state React.
 
 ---
 
@@ -764,14 +903,18 @@ website/
 │   │   ├── rekomendasi/page.tsx
 │   │   ├── ubah/page.tsx
 │   │   ├── checkout/page.tsx
-│   │   └── sukses/page.tsx
+│   │   ├── sukses/page.tsx
+│   │   ├── pesanan/page.tsx     ← §7.7
+│   │   └── nutrisi/page.tsx     ← §7.8
 │   ├── components/
 │   │   ├── Stepper.tsx
 │   │   ├── Chip.tsx
 │   │   ├── StatBox.tsx
 │   │   ├── CriteriaBadge.tsx
 │   │   ├── Counter.tsx
-│   │   └── BottomNav.tsx
+│   │   ├── MenuImage.tsx        ← §6.5 onError fallback
+│   │   ├── SiteNav.tsx          ← §6.4 bottom (mobile) / top (desktop)
+│   │   └── PageShell.tsx        ← container 1200px + grid dua kolom
 │   ├── lib/
 │   │   ├── planner.ts           ← Lapis 1
 │   │   ├── solver.ts            ← Lapis 2
@@ -942,7 +1085,11 @@ Setelah project ada di Vercel, Claude **bisa** membantu dari chat: cek status de
 
 | Topik | Keputusan |
 |---|---|
-| Auth | Tidak ada login, tidak ada nomor WhatsApp |
+| Auth | Tidak ada login, tidak ada nomor WhatsApp, **ikon profil dihapus** |
+| Target device | **Website responsif penuh** — bukan kolom mobile di tengah layar (§6.3b) |
+| Navigasi | `<SiteNav>` — bottom bar di mobile, top nav di desktop. Semua 4 rute berfungsi (§6.4) |
+| Riwayat pesanan | `/pesanan` + localStorage, **hanya untuk riwayat** (§8.2) |
+| Halaman Nutrisi | `/nutrisi` — tabel bahan, profil menu, penjelasan metode (§7.8) |
 | Payment | QRIS mockup — gambar statis + kode pesanan |
 | Database | Tidak ada. State di React, hilang saat refresh |
 | Backend terpisah | Tidak ada. Semua logic di client TypeScript |
@@ -956,4 +1103,3 @@ Setelah project ada di Vercel, Claude **bisa** membantu dari chat: cek status de
 | Deployment | Import manual di dashboard Vercel; Claude bisa bantu debug build setelahnya (§11) |
 | Bahasa UI | Indonesia |
 | Bahasa prompt Claude Code | Inggris |
-| Target device | Mobile-first, max-width 480px di desktop |

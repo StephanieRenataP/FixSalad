@@ -25,6 +25,8 @@ import {
   formatNumber,
   parseNumber,
 } from '@/lib/format';
+import { calculateTargets } from '@/lib/planner';
+import { recommend } from '@/lib/recommend';
 import type { Aktivitas, Bentuk, Gender, Mode, Rasa, Tujuan } from '@/lib/types';
 
 const TUJUAN_OPTIONS = Object.keys(TUJUAN_LABEL) as Tujuan[];
@@ -90,16 +92,14 @@ export default function PreferensiPage() {
     if (!state.tujuan) return setBodyError('Pilih tujuan dulu di bawah.');
     setBodyError(null);
 
-    dispatch({
-      type: 'SET_BODY_DATA',
-      bodyData: { beratKg: berat, tinggiCm: tinggi, usia, gender: body.gender, aktivitas: body.aktivitas, makanPerHari: body.makanPerHari },
-    });
+    const bodyData = { beratKg: berat, tinggiCm: tinggi, usia, gender: body.gender, aktivitas: body.aktivitas, makanPerHari: body.makanPerHari };
+    dispatch({ type: 'SET_BODY_DATA', bodyData });
 
-    // TODO(sesi 2): ganti dengan calculateTargets() dari lib/planner.ts.
-    const dummy = { kcal: 520, protein: 38 };
-    setEstimasi(dummy);
-    dispatch({ type: 'SET_TARGET_KCAL', value: dummy.kcal });
-    dispatch({ type: 'SET_MIN_PROTEIN', value: dummy.protein });
+    // Mengisi field target, tapi tetap bisa diedit user (SPEC.md §2.6).
+    const target = calculateTargets(bodyData, state.tujuan);
+    setEstimasi({ kcal: target.targetKcal, protein: target.minProteinG });
+    dispatch({ type: 'SET_TARGET_KCAL', value: target.targetKcal });
+    dispatch({ type: 'SET_MIN_PROTEIN', value: target.minProteinG });
   }
 
   function tambahLainnya() {
@@ -110,8 +110,17 @@ export default function PreferensiPage() {
   }
 
   function racik() {
-    if (!canSubmit) return;
-    // TODO(sesi 2): panggil recommend() lalu dispatch SET_REKOMENDASI.
+    if (!canSubmit || !state.tujuan || !state.targetKcal || !state.minProteinG || !state.budget) return;
+    const rekomendasi = recommend({
+      targetKcal: state.targetKcal,
+      minProteinG: state.minProteinG,
+      budget: state.budget,
+      tujuan: state.tujuan,
+      tidakSuka: state.tidakSuka,
+      rasa: state.preferensiRasa,
+      bentuk: state.bentuk,
+    });
+    dispatch({ type: 'SET_REKOMENDASI', rekomendasi });
     router.push('/rekomendasi');
   }
 

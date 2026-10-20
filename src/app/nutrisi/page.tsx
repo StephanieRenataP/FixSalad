@@ -1,8 +1,11 @@
 import { IconInfo } from '@/components/icons';
 import { Logo } from '@/components/Logo';
+import { MenuImage } from '@/components/MenuImage';
 import { PageShell } from '@/components/PageShell';
-import { INGREDIENTS } from '@/lib/data';
-import { TUJUAN_LABEL, AKTIVITAS_LABEL } from '@/lib/format';
+import { INGREDIENTS, INGREDIENT_BY_ID, MENUS, menuIngredientIds } from '@/lib/data';
+import { BENTUK_LABEL, RASA_LABEL, TUJUAN_LABEL, AKTIVITAS_LABEL, formatNumber, formatRupiah } from '@/lib/format';
+import { ACTIVITY_FACTOR, GOAL_CONFIG } from '@/lib/planner';
+import { solvePortions } from '@/lib/solver';
 import type { Aktivitas, Kategori, Tujuan } from '@/lib/types';
 
 const KATEGORI: { key: Kategori; label: string }[] = [
@@ -12,22 +15,23 @@ const KATEGORI: { key: Kategori; label: string }[] = [
   { key: 'dressing', label: 'Dressing' },
 ];
 
-// SPEC.md §2.3
-const AKTIVITAS_FAKTOR: Record<Aktivitas, number> = {
-  sedentary: 1.2,
-  ringan: 1.375,
-  sedang: 1.55,
-  aktif: 1.725,
-  sangat_aktif: 1.9,
-};
+// SPEC.md §2.3–2.4 — angka diambil langsung dari planner, jadi tabel tidak bisa beda dengan hitungan.
+const AKTIVITAS_FAKTOR = ACTIVITY_FACTOR;
+const TUJUAN_CONFIG = (Object.keys(GOAL_CONFIG) as Tujuan[]).map((tujuan) => ({
+  tujuan,
+  kalori: GOAL_CONFIG[tujuan].kalori,
+  protein: GOAL_CONFIG[tujuan].proteinPerKg,
+  natrium: GOAL_CONFIG[tujuan].natriumMg,
+}));
 
-// SPEC.md §2.4 — pengali kalori, protein g/kg, batas natrium per meal (mg)
-const TUJUAN_CONFIG: { tujuan: Tujuan; kalori: number; protein: number; natrium: number }[] = [
-  { tujuan: 'defisit_kalori', kalori: 0.8, protein: 2.0, natrium: 800 },
-  { tujuan: 'bulking', kalori: 1.15, protein: 1.8, natrium: 800 },
-  { tujuan: 'high_protein', kalori: 1.0, protein: 2.2, natrium: 800 },
-  { tujuan: 'rendah_garam', kalori: 1.0, protein: 1.6, natrium: 500 },
-];
+// Porsi referensi untuk kartu menu (bagian b).
+const REF_KCAL = 500;
+const REF_PROTEIN = 30;
+const REF_BUDGET = 50000;
+const MENU_REFERENSI = MENUS.map((menu) => ({
+  menu,
+  solve: solvePortions(menuIngredientIds(menu), INGREDIENT_BY_ID, REF_KCAL, REF_PROTEIN, REF_BUDGET),
+}));
 
 const num = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 1 });
 const th = 'px-3 py-2.5 text-right font-semibold first:text-left';
@@ -102,12 +106,48 @@ export default function NutrisiPage() {
           })}
         </section>
 
-        {/* (b) Gizi per menu pada porsi referensi 500 kkal.
-            TODO(sesi 2): setelah lib/solver.ts ada, tampilkan 5 kartu menu dengan
-            solvePortions(menu, 500, 30, 50000), diawali label wajib:
-            "Nilai gizi di bawah dihitung pada porsi referensi 500 kkal. Porsi aktual
-             menyesuaikan target kalori dan proteinmu."
-            Jangan isi angka dummy di sini. */}
+        {/* (b) Gizi per menu pada porsi referensi 500 kkal. Label wajib — tanpa itu
+            angkanya menyesatkan, karena porsi aktual memang berbeda per user. */}
+        <section>
+          <h2 className="text-[22px] font-bold text-green-900">Gizi per menu</h2>
+          <p className="mt-1 flex gap-2 rounded-xl bg-green-100 px-3 py-2.5 text-[13px] font-medium text-green-900 md:max-w-[60ch]">
+            <IconInfo size={16} className="mt-0.5 shrink-0" />
+            Nilai gizi di bawah dihitung pada porsi referensi 500 kkal. Porsi aktual menyesuaikan target kalori dan
+            proteinmu.
+          </p>
+          <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {MENU_REFERENSI.map(({ menu, solve }) => {
+              const t = solve.totals;
+              const stats = [
+                { label: 'Kalori', value: `${formatNumber(t.kcal)} kkal` },
+                { label: 'Protein', value: `${num.format(t.protein)} g` },
+                { label: 'Karbo', value: `${num.format(t.karbo)} g` },
+                { label: 'Lemak', value: `${num.format(t.lemak)} g` },
+                { label: 'Serat', value: `${num.format(t.serat)} g` },
+                { label: 'Natrium', value: `${formatNumber(t.natrium)} mg` },
+              ];
+              return (
+                <li key={menu.id} className="overflow-hidden rounded-card bg-white shadow-card">
+                  <MenuImage src={menu.foto} alt={menu.nama} sizes="(max-width: 768px) 100vw, 400px" className="aspect-[16/9] w-full" />
+                  <div className="p-5">
+                    <h3 className="text-[17px] font-bold leading-snug text-green-900">{menu.nama}</h3>
+                    <p className="mt-0.5 text-[13px] text-gray-600">
+                      {BENTUK_LABEL[menu.bentuk]} · {RASA_LABEL[menu.tagRasa]} · {formatRupiah(solve.hargaJual)}
+                    </p>
+                    <dl className="mt-3 grid grid-cols-3 gap-2">
+                      {stats.map((s) => (
+                        <div key={s.label} className="rounded-xl bg-cream-50 px-2 py-2 text-center">
+                          <dt className="text-[11px] font-medium text-gray-600">{s.label}</dt>
+                          <dd className="text-[14px] font-bold tabular-nums text-green-900">{s.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
         {/* (c) Cara kami menghitung */}
         <section className="card">

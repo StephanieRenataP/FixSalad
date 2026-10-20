@@ -1,11 +1,11 @@
 // Hitungan pesanan setelah user mengubah topping (screen /ubah, /checkout).
 // Ini hanya penjumlahan gizi — bukan solver. Solver ada di solver.ts (Lapis 2).
 import { INGREDIENT_BY_ID } from './data';
+import { hargaJual } from './solver';
 import type { NutritionTotals, ScoredMenu } from './types';
 
 export const UNIT_GRAM = 25; // 1 unit topping = 25 g
 export const MAX_EXTRA_UNITS = 4;
-const MARKUP = 2.0;
 
 export function sumNutrition(gram: Record<string, number>): NutritionTotals {
   const t: NutritionTotals = { kcal: 0, protein: 0, karbo: 0, lemak: 0, serat: 0, natrium: 0, modal: 0 };
@@ -22,10 +22,6 @@ export function sumNutrition(gram: Record<string, number>): NutritionTotals {
     t.modal += ing.harga * f;
   }
   return t;
-}
-
-export function hargaJual(modal: number): number {
-  return Math.round((modal * MARKUP) / 500) * 500;
 }
 
 /** Batas bawah counter: tidak boleh memotong porsi di bawah minGram. */

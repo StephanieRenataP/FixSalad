@@ -52,14 +52,10 @@ export default function RekomendasiPage() {
           : 'Kalori melewati target',
     },
     { ok: c.proteinOk, text: `Protein ${c.proteinOk ? '≥' : '<'} ${state.minProteinG ?? '—'} g` },
-    {
-      ok: c.pantanganOk,
-      text: state.tidakSuka.length ? `Tanpa ${state.tidakSuka.join(', ')}` : 'Tanpa pantangan',
-    },
     { ok: c.budgetOk, text: c.budgetOk ? 'Dalam budget' : 'Melebihi budget' },
     { ok: c.natriumOk, text: c.natriumOk ? 'Natrium aman' : 'Natrium tinggi' },
   ];
-  const terpenuhi = kriteria.filter((k) => k.ok).length;
+  const terpenuhi = solve.kriteriaTerpenuhi;
 
   const groups: { label: string; Icon: typeof IconSprout; ids: string[] }[] = [
     { label: 'Base', Icon: IconSprout, ids: menu.baseIds },
@@ -88,6 +84,9 @@ export default function RekomendasiPage() {
           </CriteriaBadge>
         ))}
       </div>
+      {state.tidakSuka.length > 0 && (
+        <p className="mt-2 text-[13px] text-gray-600">Tanpa {state.tidakSuka.join(', ')} — menu dengan bahan itu sudah disaring.</p>
+      )}
 
       <div className="mt-6 flex items-end justify-between gap-3">
         <div>
@@ -143,7 +142,7 @@ export default function RekomendasiPage() {
               {showScore && (
                 <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-lime-300 px-3 py-1.5 text-[13px] font-bold text-green-900">
                   <IconBadgeCheck size={15} />
-                  Skor cocok {Math.round(menuTerpilih.score * 100)}%
+                  Skor cocok {persen(menuTerpilih.score)}%
                 </span>
               )}
             </div>
@@ -215,6 +214,10 @@ export default function RekomendasiPage() {
   );
 }
 
+function persen(score: number): number {
+  return Math.round(Math.min(1, Math.max(0, score)) * 100);
+}
+
 function AlternatifCard({ alt, showScore, onPick }: { alt: ScoredMenu; showScore: boolean; onPick: () => void }) {
   return (
     <button
@@ -228,7 +231,7 @@ function AlternatifCard({ alt, showScore, onPick }: { alt: ScoredMenu; showScore
         <div className="text-[16px] font-bold leading-snug text-green-900">{alt.menu.nama}</div>
         <div className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-gray-600">{alt.menu.deskripsi}</div>
         {showScore && (
-          <div className="mt-1 text-[12px] font-semibold text-green-700">Skor cocok {Math.round(alt.score * 100)}%</div>
+          <div className="mt-1 text-[12px] font-semibold text-green-700">Skor cocok {persen(alt.score)}%</div>
         )}
       </div>
       <div className="shrink-0 text-right">

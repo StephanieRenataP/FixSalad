@@ -64,6 +64,8 @@ export type NutritionTarget = {
   targetKcal: number;
   minProteinG: number;
   batasNatriumMg: number;
+  bmr: number;
+  tdee: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -80,11 +82,12 @@ export type NutritionTotals = {
   modal: number;
 };
 
+/** 4 kriteria dari solver (SPEC.md §3.5). Pantangan tidak dihitung di sini —
+ *  menu yang melanggar pantangan sudah dibuang oleh hard filter. */
 export type ConstraintStatus = {
   kaloriOk: boolean;
   proteinOk: boolean;
   budgetOk: boolean;
-  pantanganOk: boolean;
   natriumOk: boolean;
 };
 
@@ -93,6 +96,7 @@ export type SolveResult = {
   totals: NutritionTotals;
   hargaJual: number;
   constraints: ConstraintStatus;
+  kriteriaTerpenuhi: number; // 0–4
 };
 
 // ---------------------------------------------------------------------------

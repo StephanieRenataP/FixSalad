@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   ].join(' · ');
 
   function bayar() {
-    // TODO(sesi 2): kode pesanan final dibuat di sini — "FS-" + 4 digit acak.
+    // Kode pesanan: "FS-" + 4 digit acak. Riwayat ditulis saat /sukses tampil.
     const kode = `FS-${Math.floor(1000 + Math.random() * 9000)}`;
     dispatch({ type: 'SET_KODE_PESANAN', kode });
     router.push('/sukses');
