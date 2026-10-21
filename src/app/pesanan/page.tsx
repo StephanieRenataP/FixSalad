@@ -82,6 +82,7 @@ export default function PesananPage() {
                       {o.waktuAmbil}
                     </span>
                     <span>{formatTanggal(o.createdAt)}</span>
+                    {o.namaPengambil && <span>a.n. {o.namaPengambil}</span>}
                   </div>
                 </div>
               </li>

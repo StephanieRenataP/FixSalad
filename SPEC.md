@@ -217,17 +217,29 @@ harga_jual  = bulatkan_ke_500_terdekat(modal × 2.0)
 
 Margin 2× adalah markup standar F&B untuk produk fresh. Angka ini masuk ke BMC sebagai revenue stream.
 
-### 3.5 Status constraint (untuk UI "4/4 Kriteria terpenuhi")
+### 3.5 Status constraint (untuk UI "n/4 Kriteria terpenuhi")
+
+**Empat** kriteria, sesuai `SolveResult` di `fixsalad_core.py`:
 
 ```
 kaloriOk   = |total_kcal - target_kcal| / target_kcal <= 0.08
 proteinOk  = total_protein >= min_protein_g
 budgetOk   = harga_jual <= budget
-pantanganOk = tidak ada bahan dengan exclusion_tag ∈ daftar_tidak_suka
-natriumOk  = (tujuan != 'rendah_garam') || total_natrium <= 500
+natriumOk  = total_natrium <= batas_natrium_mg     // 800 mg, atau 500 mg jika rendah_garam
 ```
 
+`batas_natrium_mg` berasal dari tabel tujuan di §2.4 dan diteruskan ke solver.
+
 UI menampilkan badge hijau untuk tiap kriteria yang terpenuhi, merah untuk yang tidak.
+
+**Pantangan tidak termasuk kriteria.** Pantangan adalah *hard filter* di langkah sebelum solver (§4.3): menu yang mengandung bahan terlarang dibuang sebelum sempat dihitung. Jadi `pantanganOk` selalu benar dan tidak perlu ditampilkan — menampilkannya sebagai kriteria yang "bisa gagal" justru menyesatkan.
+
+> **Koreksi — versi spec sebelumnya salah.** Versi sebelumnya menulis `natriumOk = (tujuan != 'rendah_garam') || total_natrium <= 500`, yang berarti natrium hanya dicek untuk tujuan rendah garam dan diabaikan untuk tiga tujuan lainnya. Python tidak pernah begitu: ia selalu mengecek natrium terhadap `batas_natrium_mg`. Perbedaan ini ditemukan Claude Code saat implementasi, dan **Python yang benar**, karena dua alasan:
+>
+> 1. Natrium berlebih relevan untuk semua orang, bukan hanya yang memilih "rendah garam".
+> 2. `model_weights.json` dilatih memakai perilaku Python. Kalau website memakai aturan spec yang lama, fitur dan constraint di produksi tidak lagi cocok dengan yang dipakai saat training.
+>
+> Versi yang di atas adalah yang berlaku. Spec sekarang cocok dengan Python.
 
 ---
 
@@ -536,7 +548,16 @@ Token warna & tipografi diambil dari `FixSalad_Mobile_Prototype.pdf`. **Layout-n
 Aturan:
 - Container konten: `max-width: 1200px; margin-inline: auto;` — **bukan** 480 px.
 - Section hero boleh full-bleed (background selebar layar), isinya tetap dibatasi 1200 px.
-- Tombol CTA **tidak** melebar penuh di desktop. Batasi `max-width: 360px` saat `lg`.
+- **Lebar tombol — dua aturan berbeda, jangan dicampur:**
+
+  | Jenis tombol | Lebar | Contoh |
+  |---|---|---|
+  | **Submit di dalam card/form** | `w-full` — penuh selebar card, **tanpa** `max-width` | Hitung Kebutuhanku, Racik Menu Saya, Pesan Sekarang, Simpan & Lanjut, Bayar Sekarang |
+  | **CTA berdiri sendiri di hero** | `max-width: 360px` saat `lg` | Mulai Personalisasi, Lihat cara kerja |
+
+  Pill tab (Hitungkan untuk saya / Saya tahu targetnya) juga **mengisi penuh**: `grid-cols-2` dengan tiap pill `w-full`, bukan selebar teksnya.
+
+  > **Koreksi — aturan lama salah.** Versi sebelumnya menulis "tombol CTA dibatasi 360px saat lg" tanpa membedakan jenisnya. Akibatnya tombol submit di dalam card ikut terpotong 360px sementara card-nya jauh lebih lebar, dan terlihat mengambang — paling jelas saat browser di-zoom 80%, karena viewport CSS jadi lebih lebar dan breakpoint `lg` aktif lebih awal. Tombol submit adalah aksi utama dari form di sekitarnya, jadi lebarnya harus mengikuti form itu.
 - Teks panjang jangan melebihi ~70 karakter per baris. Paragraf di desktop dibatasi `max-width: 60ch`.
 - Grid dua kolom standar: `grid-template-columns: 1fr 380px; gap: 24px;` — konten utama kiri, panel ringkasan kanan.
 - Panel kanan `position: sticky; top: 88px;` supaya ringkasan tetap terlihat saat scroll.
@@ -596,9 +617,15 @@ images: { remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com' 
 
 **Fallback wajib.** Buat komponen `<MenuImage>` yang membungkus `next/image` dengan handler `onError` yang mengganti gambar dengan placeholder gradient hijau berisi nama menu. Ini bukan opsional: URL eksternal bisa berubah atau diblokir jaringan kampus, dan gambar rusak saat demo jauh lebih buruk daripada placeholder yang rapi.
 
-**Thumbnail bahan** di screen Ubah Topping: **jangan** pakai foto. Pakai lingkaran berwarna dengan inisial nama bahan (mis. "A" untuk Alpukat), warna diturunkan dari `kategori`. Dua belas URL eksternal untuk thumbnail 40px menambah banyak titik gagal tanpa manfaat visual yang sepadan.
+**Thumbnail bahan** di screen Ubah Topping: pakai **foto**, sesuai prototype halaman 4. URL ada di kolom `foto_url` pada `ingredients.csv` dan terekspor sebagai field `foto` di `ingredients.json`.
 
-**Logo** FixSalad: SVG inline, daun dalam kotak bulat hijau seperti di prototype. Jangan file eksternal.
+- 18 bahan punya foto: semua protein (P01–P06) dan semua topping (T01–T12).
+- 9 bahan tidak punya foto: base (B01–B05) dan dressing (D01–D04) — keduanya tidak pernah muncul di daftar Ubah Topping. Field `foto` bernilai `null`.
+- Komponen thumbnail **wajib** menangani `foto === null` dan error muat dengan jatuh ke `<IngredientAvatar>` (lingkaran inisial yang sudah ada). Jangan hapus komponen itu — ia tetap jadi fallback.
+
+> Versi spec sebelumnya melarang foto bahan dengan alasan 18 URL eksternal menambah titik gagal untuk thumbnail 40 px. Keputusan itu dibatalkan atas permintaan Ren, dan prototype memang menampilkan foto. Risikonya tetap nyata, jadi fallback avatar di atas bukan opsional.
+
+**Logo** FixSalad: pakai file `FixSalad_Logo.png` yang ada di root folder website. Pindahkan ke `public/FixSalad_Logo.png` dan muat lewat `next/image`. Logo SVG inline yang dibuat sebelumnya diganti.
 
 ---
 
@@ -712,7 +739,7 @@ Sesuai halaman 3 prototype. **Hapus teks "Contoh data. Angka akan datang dari mo
 - Nama menu + badge "Skor cocok {N}%" (dari Lapis 3)
 - 4 StatBox: Protein, Serat, Karbo, Lemak
 - Breakdown bahan: Base / Protein / Topping / Dressing — **tampilkan gram tiap bahan** (contoh: "Dada Ayam Panggang 120 g")
-- Card "Sesuai targetmu" — badge kriteria + "{n}/5 Kriteria terpenuhi"
+- Card "Sesuai targetmu" — badge kriteria + "{n}/4 Kriteria terpenuhi" (§3.5)
 - Total Pembayaran (angka besar, warna rust)
 - CTA "Pesan Sekarang" → `/checkout`
 - CTA sekunder "Ubah Topping" → `/ubah`
@@ -739,10 +766,27 @@ Sesuai halaman 4 prototype.
 
 Sesuai halaman 5 prototype, **dengan perubahan**: tanpa login, tanpa WhatsApp.
 
-- Toggle "Ambil di tempat" / "Antar" — untuk prototype, **Antar dinonaktifkan** dengan label "Segera hadir"
-- **Hapus field Nama Lengkap dan No. WhatsApp** (keputusan: pemesanan cepat tanpa data diri)
+- **Opsi "Antar" dihapus sepenuhnya.** Bukan disabled, bukan "segera hadir" — hilangkan toggle-nya. Semua pesanan adalah ambil di tempat. Satu opsi yang tidak bisa dipilih hanya menambah kebingungan.
+- **Form data pengambil** (dikembalikan — dibutuhkan agar kasir bisa memanggil nama saat pesanan siap):
+  - Nama Lengkap — wajib, minimal 2 karakter
+  - No. WhatsApp — wajib, validasi format nomor Indonesia (`08…` atau `+628…`, 9–15 digit)
+  - Keduanya tetap **tanpa login**. Data hanya dipakai di sesi ini dan ikut tersimpan ke riwayat pesanan.
 - Waktu ambil: dropdown — "Secepatnya (~15–20 mnt)" / "30 menit lagi" / "1 jam lagi"
-- Metode pembayaran: [QRIS] [E-wallet] [Transfer] — QRIS default, dua lainnya disabled "Segera hadir"
+- Metode pembayaran: [QRIS] [E-wallet] [Transfer] — **ketiganya aktif dan bisa dipilih**. Tiap pilihan menampilkan panel berbeda:
+
+  | Metode | Yang ditampilkan |
+  |---|---|
+  | **QRIS** (default) | Gambar QR mockup + "Tunjukkan kode ini ke kasir" |
+  | **E-wallet** | Nomor e-wallet + tombol **Salin** |
+  | **Transfer** | Nama bank, nomor rekening, nama pemilik + tombol **Salin** nomor rekening |
+
+  Nomor placeholder (semuanya fiktif, aman untuk demo):
+  ```
+  E-wallet : 0812-3456-7890  (OVO / GoPay — a.n. FixSalad Kitchen)
+  Transfer : BCA 1234567890  (a.n. FixSalad Kitchen)
+  ```
+
+  Tombol Salin memakai `navigator.clipboard.writeText()`, dibungkus try/catch, dan menampilkan "Tersalin!" selama 2 detik. Di konteks non-HTTPS clipboard API tidak tersedia — jika gagal, biarkan nomornya tetap bisa diblok dan disalin manual, jangan menampilkan error.
 - Card "Pesananmu": foto, nama menu, ringkasan gizi, badge "Tersuai Preferensi"
 - Rincian: Subtotal, Biaya kemasan Rp 0 (Promo), badge "+10 Poin"
 - Total besar
@@ -1085,7 +1129,8 @@ Setelah project ada di Vercel, Claude **bisa** membantu dari chat: cek status de
 
 | Topik | Keputusan |
 |---|---|
-| Auth | Tidak ada login, tidak ada nomor WhatsApp, **ikon profil dihapus** |
+| Auth | Tidak ada login, ikon profil dihapus. Nama + No. WhatsApp diisi saat checkout (§7.5) |
+| Pengantaran | Hanya ambil di tempat. Opsi "Antar" dihapus sepenuhnya |
 | Target device | **Website responsif penuh** — bukan kolom mobile di tengah layar (§6.3b) |
 | Navigasi | `<SiteNav>` — bottom bar di mobile, top nav di desktop. Semua 4 rute berfungsi (§6.4) |
 | Riwayat pesanan | `/pesanan` + localStorage, **hanya untuk riwayat** (§8.2) |

@@ -21,6 +21,8 @@ export const initialState: OrderState = {
   menuTerpilih: null,
   toppingTambahan: {},
 
+  namaPengambil: '',
+  noWhatsApp: '',
   waktuAmbil: 'Secepatnya (~15–20 mnt)',
   kodePesanan: null,
 };
@@ -68,6 +70,10 @@ function reducer(state: OrderState, action: OrderAction): OrderState {
       };
     case 'RESET_TOPPING':
       return { ...state, toppingTambahan: {} };
+    case 'SET_NAMA_PENGAMBIL':
+      return { ...state, namaPengambil: action.value };
+    case 'SET_NO_WHATSAPP':
+      return { ...state, noWhatsApp: action.value };
     case 'SET_WAKTU_AMBIL':
       return { ...state, waktuAmbil: action.value };
     case 'SET_KODE_PESANAN':

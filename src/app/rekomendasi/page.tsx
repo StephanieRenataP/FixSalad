@@ -65,7 +65,8 @@ export default function RekomendasiPage() {
   ];
   const dressing = INGREDIENT_BY_ID[menu.dressingId];
 
-  // Mobile: di antara menu & alternatif. lg: panel kanan sticky.
+  // Mobile: kriteria lalu alternatif, di bawah menu utama. lg: keduanya di panel kanan
+  // sticky, supaya alternatif terlihat tanpa scroll.
   const kriteriaCard = (
     <section className="card">
       <div className="flex items-center justify-between gap-2">
@@ -111,11 +112,42 @@ export default function RekomendasiPage() {
     </section>
   );
 
+  const alternatifCard = alternatif.length > 0 && (
+    <section className="card">
+      <h3 className="flex items-center gap-2 text-[18px] font-bold text-green-900">
+        <IconShuffle size={20} />
+        Alternatif lain
+      </h3>
+      <ul className="mt-3 space-y-3">
+        {alternatif.map((alt) => (
+          <li key={alt.menu.id}>
+            <AlternatifCard
+              alt={alt}
+              showScore={showScore}
+              onPick={() => {
+                dispatch({ type: 'PILIH_MENU', menu: alt });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+
   return (
     <>
       <FlowHeader title="Rekomendasi" step={2} backHref="/preferensi" />
 
-      <PageShell aside={kriteriaCard} asideOnlyDesktop>
+      <PageShell
+        aside={
+          <>
+            {kriteriaCard}
+            {alternatifCard}
+          </>
+        }
+        asideOnlyDesktop
+      >
         <div>
           <div className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-green-900">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-lime-300 text-[12px]">2</span>
@@ -185,30 +217,7 @@ export default function RekomendasiPage() {
         </section>
 
         <div className="lg:hidden">{kriteriaCard}</div>
-
-        {/* Alternatif */}
-        {alternatif.length > 0 && (
-          <section className="card">
-            <h3 className="flex items-center gap-2 text-[18px] font-bold text-green-900">
-              <IconShuffle size={20} />
-              Alternatif lain
-            </h3>
-            <ul className="mt-3 space-y-3 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">
-              {alternatif.map((alt) => (
-                <li key={alt.menu.id}>
-                  <AlternatifCard
-                    alt={alt}
-                    showScore={showScore}
-                    onPick={() => {
-                      dispatch({ type: 'PILIH_MENU', menu: alt });
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {alternatifCard && <div className="lg:hidden">{alternatifCard}</div>}
       </PageShell>
     </>
   );
@@ -223,20 +232,23 @@ function AlternatifCard({ alt, showScore, onPick }: { alt: ScoredMenu; showScore
     <button
       type="button"
       onClick={onPick}
-      className="flex h-full w-full items-center gap-3 rounded-2xl bg-cream-50 p-3 text-left transition-colors hover:bg-green-100"
+      className="flex w-full items-start gap-3 rounded-2xl bg-cream-50 p-3 text-left transition-colors hover:bg-green-100"
       aria-label={`Pilih ${alt.menu.nama}`}
     >
       <MenuImage src={alt.menu.foto} alt={alt.menu.nama} sizes="72px" compact className="h-[72px] w-[72px] shrink-0 rounded-xl" />
       <div className="min-w-0 flex-1">
-        <div className="text-[16px] font-bold leading-snug text-green-900">{alt.menu.nama}</div>
+        <div className="text-[15px] font-bold leading-snug text-green-900">{alt.menu.nama}</div>
         <div className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-gray-600">{alt.menu.deskripsi}</div>
-        {showScore && (
-          <div className="mt-1 text-[12px] font-semibold text-green-700">Skor cocok {persen(alt.score)}%</div>
-        )}
-      </div>
-      <div className="shrink-0 text-right">
-        <div className="text-[16px] font-bold text-green-900">{formatNumber(alt.solve.totals.kcal)} kcal</div>
-        <div className="text-[13px] font-medium text-gray-600">{formatRupiah(alt.solve.hargaJual)}</div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+          <span className="font-bold text-green-900">{formatNumber(alt.solve.totals.kcal)} kkal</span>
+          <span className="text-gray-600">·</span>
+          <span className="font-bold text-green-900">{formatRupiah(alt.solve.hargaJual)}</span>
+          {showScore && (
+            <span className="rounded-full bg-lime-300 px-2 py-0.5 text-[12px] font-bold text-green-900">
+              Skor cocok {persen(alt.score)}%
+            </span>
+          )}
+        </div>
       </div>
     </button>
   );

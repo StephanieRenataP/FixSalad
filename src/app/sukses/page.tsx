@@ -11,6 +11,7 @@ import { useOrder } from '@/context/OrderContext';
 import { formatRupiah } from '@/lib/format';
 import { applyToppings } from '@/lib/order';
 import { saveOrder } from '@/lib/orderHistory';
+import { normalisasiWhatsApp } from '@/lib/pengambil';
 
 export default function SuksesPage() {
   const router = useRouter();
@@ -33,6 +34,8 @@ export default function SuksesPage() {
       total: applied.harga,
       waktuAmbil: state.waktuAmbil,
       createdAt: new Date().toISOString(),
+      namaPengambil: state.namaPengambil.trim(),
+      noWhatsApp: normalisasiWhatsApp(state.noWhatsApp),
     });
     // hanya sekali per kode pesanan
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,6 +69,10 @@ export default function SuksesPage() {
               <section className="card">
                 <h2 className="text-[18px] font-bold text-green-900">Ringkasan</h2>
                 <dl className="mt-3 space-y-2 text-[15px]">
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-gray-600">Atas nama</dt>
+                    <dd className="text-right font-bold text-green-900">{state.namaPengambil.trim() || '—'}</dd>
+                  </div>
                   <div className="flex justify-between gap-3">
                     <dt className="text-gray-600">Menu</dt>
                     <dd className="text-right font-bold text-green-900">{scored?.menu.nama ?? '—'}</dd>

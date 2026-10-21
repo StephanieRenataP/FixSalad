@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, type ReactNode } from 'react';
+import { CopyButton } from '@/components/CopyButton';
 import { FlowHeader } from '@/components/FlowHeader';
 import {
   IconArrowRight,
@@ -13,27 +15,39 @@ import {
   IconLeaf,
   IconLock,
   IconQr,
-  IconScooter,
   IconStore,
   IconWallet,
 } from '@/components/icons';
 import { MenuImage } from '@/components/MenuImage';
 import { PageShell } from '@/components/PageShell';
+import { QrisMock } from '@/components/QrisMock';
 import { useOrder } from '@/context/OrderContext';
 import { formatNumber, formatRupiah } from '@/lib/format';
 import { applyToppings } from '@/lib/order';
+import { namaValid, whatsAppValid } from '@/lib/pengambil';
 
 const WAKTU_AMBIL = ['Secepatnya (~15–20 mnt)', '30 menit lagi', '1 jam lagi'];
 
-const PEMBAYARAN = [
-  { key: 'qris', label: 'QRIS', Icon: IconQr, enabled: true },
-  { key: 'ewallet', label: 'E-wallet', Icon: IconWallet, enabled: false },
-  { key: 'transfer', label: 'Transfer', Icon: IconBank, enabled: false },
+type Metode = 'qris' | 'ewallet' | 'transfer';
+
+const PEMBAYARAN: { key: Metode; label: string; Icon: typeof IconQr }[] = [
+  { key: 'qris', label: 'QRIS', Icon: IconQr },
+  { key: 'ewallet', label: 'E-wallet', Icon: IconWallet },
+  { key: 'transfer', label: 'Transfer', Icon: IconBank },
 ];
+
+// Nomor fiktif untuk demo (SPEC.md §7.5) — jangan diganti nomor sungguhan.
+const EWALLET = { tampil: '0812-3456-7890', salin: '081234567890', ket: 'OVO / GoPay — a.n. FixSalad Kitchen' };
+const REKENING = { bank: 'BCA', nomor: '1234567890', ket: 'a.n. FixSalad Kitchen' };
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { state, dispatch } = useOrder();
+  const [metode, setMetode] = useState<Metode>('qris');
+  // Error tampil setelah field ditinggalkan dan sudah diisi. Field kosong cukup dijelaskan
+  // hint di bawah "Bayar Sekarang" — kalau error muncul saat blur, layout bergeser di tengah
+  // klik dan klik pertama ke elemen di bawahnya hilang.
+  const [touched, setTouched] = useState({ nama: false, wa: false });
   const scored = state.menuTerpilih;
 
   if (!scored) {
@@ -60,7 +74,14 @@ export default function CheckoutPage() {
     ...(state.tidakSuka.length ? [`tanpa ${state.tidakSuka.join(', ')}`] : []),
   ].join(' · ');
 
+  const namaOk = namaValid(state.namaPengambil);
+  const waOk = whatsAppValid(state.noWhatsApp);
+  const bisaBayar = namaOk && waOk;
+  const namaError = touched.nama && state.namaPengambil !== '' && !namaOk;
+  const waError = touched.wa && state.noWhatsApp !== '' && !waOk;
+
   function bayar() {
+    if (!bisaBayar) return;
     // Kode pesanan: "FS-" + 4 digit acak. Riwayat ditulis saat /sukses tampil.
     const kode = `FS-${Math.floor(1000 + Math.random() * 9000)}`;
     dispatch({ type: 'SET_KODE_PESANAN', kode });
@@ -123,9 +144,12 @@ export default function CheckoutPage() {
                 <div className="text-[30px] font-extrabold leading-none text-green-900">{formatRupiah(total)}</div>
               </div>
 
-              <button type="button" onClick={bayar} className="btn-primary mt-5 text-[18px]">
+              <button type="button" onClick={bayar} disabled={!bisaBayar} className="btn-primary mt-5 text-[18px]">
                 Bayar Sekarang <IconArrowRight size={20} />
               </button>
+              {!bisaBayar && (
+                <p className="mt-2 text-center text-[13px] text-gray-600">Isi nama dan nomor WhatsApp pengambil dulu.</p>
+              )}
               <p className="mt-3 flex items-center justify-center gap-1.5 text-[13px] text-gray-600">
                 <IconLock size={15} />
                 Pembayaran aman terenkripsi 256-bit
@@ -157,57 +181,128 @@ export default function CheckoutPage() {
             </span>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full bg-green-700 px-4 py-2.5 text-[14px] font-semibold text-white">
-              <IconStore size={18} />
-              Ambil di tempat
-            </span>
-            <span
-              aria-disabled="true"
-              className="inline-flex items-center gap-2 rounded-full bg-cream-50 px-4 py-2.5 text-[14px] font-semibold text-gray-600"
-            >
-              <IconScooter size={18} />
-              Antar
-              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[11px]">Segera hadir</span>
-            </span>
-          </div>
+          <fieldset className="mt-5 space-y-4">
+            <legend className="mb-1 flex items-center gap-2 text-[17px] font-bold text-green-900">
+              <IconStore size={20} />
+              Data pengambil
+            </legend>
+            <p className="text-[13px] text-gray-600">
+              Semua pesanan diambil di tempat. Kasir akan memanggil namamu saat pesanan siap.
+            </p>
 
-          <label className="mt-5 block">
-            <span className="label">Waktu ambil</span>
-            <div className="field text-[16px] font-medium">
-              <select value={state.waktuAmbil} onChange={(e) => dispatch({ type: 'SET_WAKTU_AMBIL', value: e.target.value })}>
-                {WAKTU_AMBIL.map((w) => (
-                  <option key={w} value={w}>
-                    {w}
-                  </option>
-                ))}
-              </select>
-              <IconClock size={20} className="shrink-0 text-gray-600" />
-            </div>
-          </label>
+            <TextField label="Nama Lengkap" error={namaError ? 'Nama minimal 2 karakter.' : null}>
+              <input
+                type="text"
+                autoComplete="name"
+                value={state.namaPengambil}
+                onChange={(e) => dispatch({ type: 'SET_NAMA_PENGAMBIL', value: e.target.value })}
+                onBlur={() => setTouched((t) => ({ ...t, nama: true }))}
+                placeholder="Nama untuk dipanggil kasir"
+                aria-invalid={namaError}
+              />
+            </TextField>
+
+            <TextField
+              label="No. WhatsApp"
+              error={waError ? 'Gunakan format 08… atau +628…, 9–15 digit.' : null}
+            >
+              <input
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                value={state.noWhatsApp}
+                onChange={(e) => dispatch({ type: 'SET_NO_WHATSAPP', value: e.target.value })}
+                onBlur={() => setTouched((t) => ({ ...t, wa: true }))}
+                placeholder="0812xxxxxxxx"
+                aria-invalid={waError}
+              />
+            </TextField>
+
+            <label className="block">
+              <span className="label">Waktu ambil</span>
+              <div className="field text-[16px] font-medium">
+                <select value={state.waktuAmbil} onChange={(e) => dispatch({ type: 'SET_WAKTU_AMBIL', value: e.target.value })}>
+                  {WAKTU_AMBIL.map((w) => (
+                    <option key={w} value={w}>
+                      {w}
+                    </option>
+                  ))}
+                </select>
+                <IconClock size={20} className="shrink-0 text-gray-600" />
+              </div>
+            </label>
+          </fieldset>
+
+          <div className="mt-6 h-px bg-gray-200" />
 
           <fieldset className="mt-5">
             <legend className="label">Metode Pembayaran</legend>
-            <div className="flex flex-wrap gap-2">
-              {PEMBAYARAN.map(({ key, label, Icon, enabled }) => (
+            <div className="grid grid-cols-3 gap-2">
+              {PEMBAYARAN.map(({ key, label, Icon }) => (
                 <button
                   key={key}
                   type="button"
-                  disabled={!enabled}
-                  aria-pressed={enabled}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[14px] font-semibold ${
-                    enabled ? 'bg-green-700 text-white' : 'cursor-not-allowed bg-cream-50 text-gray-600'
+                  aria-pressed={metode === key}
+                  onClick={() => setMetode(key)}
+                  className={`inline-flex w-full items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-[14px] font-semibold transition-colors ${
+                    metode === key ? 'bg-green-700 text-white' : 'bg-cream-50 text-green-900 hover:bg-green-100'
                   }`}
                 >
-                  <Icon size={17} />
+                  <Icon size={17} className="shrink-0" />
                   {label}
-                  {!enabled && <span className="text-[11px] font-medium opacity-80">· Segera hadir</span>}
                 </button>
               ))}
+            </div>
+
+            <div className="mt-4 rounded-2xl bg-cream-50 p-4">
+              {metode === 'qris' && (
+                <div className="text-center">
+                  <div className="mx-auto w-fit rounded-2xl border border-gray-200 bg-white p-3">
+                    <QrisMock seed="FixSalad Kitchen" />
+                  </div>
+                  <p className="mt-3 text-[14px] font-semibold text-green-900">Tunjukkan kode ini ke kasir</p>
+                </div>
+              )}
+              {metode === 'ewallet' && (
+                <NomorBayar judul="Nomor e-wallet" nomor={EWALLET.tampil} salin={EWALLET.salin} ket={EWALLET.ket} />
+              )}
+              {metode === 'transfer' && (
+                <NomorBayar
+                  judul={`Rekening ${REKENING.bank}`}
+                  nomor={REKENING.nomor}
+                  salin={REKENING.nomor}
+                  ket={REKENING.ket}
+                />
+              )}
             </div>
           </fieldset>
         </section>
       </PageShell>
     </>
+  );
+}
+
+function TextField({ label, error, children }: { label: string; error: string | null; children: ReactNode }) {
+  return (
+    <label className="block">
+      <span className="label">{label}</span>
+      <div className={`field text-[16px] font-medium ${error ? 'ring-rust-600 focus-within:ring-rust-600' : ''}`}>{children}</div>
+      {error && <span className="mt-1.5 block text-[13px] font-medium text-rust-600">{error}</span>}
+    </label>
+  );
+}
+
+/** Nomor tujuan bayar + tombol Salin. `select-all`: sekali tap memblok seluruh nomor,
+ *  jadi tetap mudah disalin manual kalau clipboard API tidak tersedia. */
+function NomorBayar({ judul, nomor, salin, ket }: { judul: string; nomor: string; salin: string; ket: string }) {
+  return (
+    <div>
+      <div className="text-[13px] font-semibold text-gray-600">{judul}</div>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+        <span className="select-all text-[24px] font-extrabold tracking-wide text-green-900">{nomor}</span>
+        <CopyButton text={salin} label={judul} />
+      </div>
+      <div className="mt-1 text-[14px] text-green-900">{ket}</div>
+    </div>
   );
 }

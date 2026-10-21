@@ -45,10 +45,10 @@ export default function LandingPage() {
             dipesan.
           </p>
           <div className="mt-6 space-y-3 lg:flex lg:gap-3 lg:space-y-0">
-            <Link href="/preferensi" className="btn-primary">
+            <Link href="/preferensi" className="btn-primary lg:max-w-[360px]">
               Mulai Personalisasi <IconArrowRight size={20} />
             </Link>
-            <a href="#cara-kerja" className="btn-ghost">
+            <a href="#cara-kerja" className="btn-ghost lg:max-w-[360px]">
               Lihat cara kerja
             </a>
           </div>

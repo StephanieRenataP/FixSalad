@@ -141,13 +141,6 @@ export const IconStore = make(
     <path d="M5 13v8h14v-8" />
   </>,
 );
-export const IconScooter = make(
-  <>
-    <circle cx="6" cy="17" r="3" />
-    <circle cx="18" cy="17" r="3" />
-    <path d="M9 17h6l-2-8h3M13 9V6h-2" />
-  </>,
-);
 export const IconQr = make(
   <>
     <rect x="3" y="3" width="7" height="7" rx="1" />

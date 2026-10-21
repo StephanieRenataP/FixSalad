@@ -37,6 +37,9 @@ def main() -> None:
             "maxGram": int(r.max_gram),
             "tagRasa": r.tag_rasa or None,
             "exclusionTag": r.exclusion_tag or None,
+            # Foto bahan untuk screen Ubah Topping. Kosong untuk base & dressing
+            # -> komponen jatuh ke IngredientAvatar (lingkaran inisial).
+            "foto": f"{r.foto_url}?w=200&q=70&auto=format&fit=crop" if r.foto_url else None,
         }
         for iid, r in ing.iterrows()
     ]

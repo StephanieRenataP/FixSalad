@@ -28,7 +28,7 @@ export function FlowHeader({ title, step, backHref }: Props) {
             <IconArrowLeft size={24} />
           </button>
           <span className="flex shrink-0 md:hidden">
-            <LogoMark size={30} />
+            <LogoMark size={32} />
           </span>
           <h1 className="min-w-0 flex-1 truncate text-[18px] font-bold text-green-900 lg:text-[20px]">
             Order Flow {title}

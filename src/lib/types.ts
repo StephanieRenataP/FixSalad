@@ -31,6 +31,7 @@ export type Ingredient = {
   maxGram: number;
   tagRasa: Rasa | null;
   exclusionTag: string | null; // 'bawang' | 'tomat' | 'seledri' | 'jamur' | 'dairy' | 'gluten'
+  foto: string | null; // URL Unsplash untuk protein & topping; null untuk base & dressing (§6.5)
 };
 
 export type MenuTemplate = {
@@ -146,7 +147,9 @@ export type OrderState = {
   menuTerpilih: ScoredMenu | null;
   toppingTambahan: Record<string, number>; // ingredientId → jumlah unit (1 unit = 25 g)
 
-  // Checkout
+  // Checkout — selalu ambil di tempat, tanpa login (§7.5)
+  namaPengambil: string;
+  noWhatsApp: string;
   waktuAmbil: string;
   kodePesanan: string | null;
 };
@@ -165,6 +168,8 @@ export type OrderAction =
   | { type: 'PILIH_MENU'; menu: ScoredMenu }
   | { type: 'SET_TOPPING'; ingredientId: string; units: number }
   | { type: 'RESET_TOPPING' }
+  | { type: 'SET_NAMA_PENGAMBIL'; value: string }
+  | { type: 'SET_NO_WHATSAPP'; value: string }
   | { type: 'SET_WAKTU_AMBIL'; value: string }
   | { type: 'SET_KODE_PESANAN'; kode: string }
   | { type: 'RESET' };

@@ -1,6 +1,7 @@
 import type { Kategori } from '@/lib/types';
 
-// Thumbnail bahan: lingkaran berwarna + inisial, bukan foto (SPEC.md §6.5).
+// Lingkaran berwarna + inisial. Fallback <IngredientThumb> saat bahan tidak punya foto
+// atau foto gagal dimuat (SPEC.md §6.5) — jangan dihapus.
 const KATEGORI_STYLE: Record<Kategori, string> = {
   base: 'bg-green-100 text-green-700',
   protein: 'bg-rust-100 text-rust-600',

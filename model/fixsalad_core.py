@@ -323,6 +323,10 @@ def load_data(data_dir: str = "../data"):
     ing = pd.read_csv(f"{data_dir}/ingredients.csv").set_index("ingredient_id")
     ing["exclusion_tag"] = ing["exclusion_tag"].fillna("")
     ing["tag_rasa"] = ing["tag_rasa"].fillna("")
+    if "foto_url" in ing.columns:
+        ing["foto_url"] = ing["foto_url"].fillna("")
+    else:
+        ing["foto_url"] = ""
 
     menus = pd.read_csv(f"{data_dir}/menu_templates.csv").set_index("menu_id")
     return ing, menus

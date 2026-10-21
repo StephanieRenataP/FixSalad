@@ -189,7 +189,7 @@ export default function PreferensiPage() {
           <p className="mt-1 text-[15px] text-gray-600">Sesuaikan porsi, pantangan, dan cita rasa favoritmu.</p>
 
           {/* Pill tab — bukan screen baru, tidak mengubah URL. SPEC.md §7.2 */}
-          <div role="tablist" aria-label="Cara menentukan target" className="mt-5 grid grid-cols-2 gap-2 md:max-w-[480px]">
+          <div role="tablist" aria-label="Cara menentukan target" className="mt-5 grid grid-cols-2 gap-2">
             {TABS.map((t) => {
               const selected = state.mode === t.mode;
               return (
@@ -201,7 +201,7 @@ export default function PreferensiPage() {
                   aria-selected={selected}
                   aria-controls="panel-data-diri"
                   onClick={() => dispatch({ type: 'SET_MODE', mode: t.mode })}
-                  className={`flex min-h-[48px] items-center justify-center gap-1.5 rounded-full px-3 py-2 text-center text-[14px] font-semibold leading-tight transition-colors ${
+                  className={`flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-center text-[14px] font-semibold leading-tight transition-colors ${
                     selected ? 'bg-green-900 text-white' : 'bg-green-100 text-green-900 hover:brightness-95'
                   }`}
                 >
@@ -417,7 +417,7 @@ export default function PreferensiPage() {
               Racik Menu Saya <IconSparkle size={20} />
             </button>
             {!canSubmit && (
-              <p className="-mt-2 text-center text-[13px] text-gray-600 lg:max-w-[360px]">
+              <p className="-mt-2 text-center text-[13px] text-gray-600">
                 Lengkapi tujuan, target kalori, protein, budget, dan bentuk.
               </p>
             )}

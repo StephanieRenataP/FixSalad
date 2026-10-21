@@ -6,7 +6,7 @@ import { useState, type ReactNode } from 'react';
 import { Counter } from '@/components/Counter';
 import { FlowHeader } from '@/components/FlowHeader';
 import { IconAlert, IconArrowRight, IconInfo, IconWand } from '@/components/icons';
-import { IngredientAvatar } from '@/components/IngredientAvatar';
+import { IngredientThumb } from '@/components/IngredientThumb';
 import { PageShell } from '@/components/PageShell';
 import { useOrder } from '@/context/OrderContext';
 import { INGREDIENTS, INGREDIENT_BY_ID } from '@/lib/data';
@@ -130,7 +130,7 @@ export default function UbahPage() {
               const dilarang = ing.exclusionTag !== null && state.tidakSuka.includes(ing.exclusionTag);
               return (
                 <li key={id} className="flex items-center gap-2.5 py-3">
-                  <IngredientAvatar nama={ing.nama} kategori={ing.kategori} size={40} />
+                  <IngredientThumb ingredient={ing} />
                   <div className="min-w-0 flex-1">
                     <div className="text-[15px] font-bold leading-snug text-green-900">{ing.nama}</div>
                     <div className="text-[12px] leading-snug text-gray-600">

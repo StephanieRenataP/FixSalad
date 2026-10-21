@@ -13,7 +13,8 @@
     "minGram": 40,
     "maxGram": 120,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   },
   {
     "id": "B02",
@@ -29,7 +30,8 @@
     "minGram": 40,
     "maxGram": 120,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   },
   {
     "id": "B03",
@@ -45,7 +47,8 @@
     "minGram": 30,
     "maxGram": 100,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   },
   {
     "id": "B04",
@@ -61,7 +64,8 @@
     "minGram": 0,
     "maxGram": 250,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   },
   {
     "id": "B05",
@@ -77,7 +81,8 @@
     "minGram": 0,
     "maxGram": 110,
     "tagRasa": "gurih",
-    "exclusionTag": "gluten"
+    "exclusionTag": "gluten",
+    "foto": null
   },
   {
     "id": "P01",
@@ -93,7 +98,8 @@
     "minGram": 50,
     "maxGram": 150,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1668665771867-7b3b53d7597a?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "P02",
@@ -109,7 +115,8 @@
     "minGram": 0,
     "maxGram": 120,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1576343123473-0e7d3a34c5da?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "P03",
@@ -125,7 +132,8 @@
     "minGram": 0,
     "maxGram": 50,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1692742245738-f42241e02108?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "P04",
@@ -141,7 +149,8 @@
     "minGram": 0,
     "maxGram": 120,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1712257156805-4e2d9318be8b?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "P05",
@@ -157,7 +166,8 @@
     "minGram": 0,
     "maxGram": 120,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1635452066377-6df9b3529b33?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "P06",
@@ -173,7 +183,8 @@
     "minGram": 0,
     "maxGram": 120,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1644143452702-e883f31d7476?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T01",
@@ -189,7 +200,8 @@
     "minGram": 0,
     "maxGram": 80,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/flagged/photo-1579410137904-03cda8069b07?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T02",
@@ -205,7 +217,8 @@
     "minGram": 0,
     "maxGram": 60,
     "tagRasa": "segar",
-    "exclusionTag": "tomat"
+    "exclusionTag": "tomat",
+    "foto": "https://images.unsplash.com/photo-1587334274535-5f82e7e55dc0?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T03",
@@ -221,7 +234,8 @@
     "minGram": 0,
     "maxGram": 60,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T04",
@@ -237,7 +251,8 @@
     "minGram": 0,
     "maxGram": 60,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T05",
@@ -253,7 +268,8 @@
     "minGram": 0,
     "maxGram": 80,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1649251037566-6881b4956615?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T06",
@@ -269,7 +285,8 @@
     "minGram": 0,
     "maxGram": 80,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1649257171206-37625b1f3b2f?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T07",
@@ -285,7 +302,8 @@
     "minGram": 0,
     "maxGram": 40,
     "tagRasa": "gurih",
-    "exclusionTag": "bawang"
+    "exclusionTag": "bawang",
+    "foto": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T08",
@@ -301,7 +319,8 @@
     "minGram": 0,
     "maxGram": 60,
     "tagRasa": "gurih",
-    "exclusionTag": "jamur"
+    "exclusionTag": "jamur",
+    "foto": "https://images.unsplash.com/photo-1504545102780-26774c1bb073?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T09",
@@ -317,7 +336,8 @@
     "minGram": 0,
     "maxGram": 30,
     "tagRasa": "segar",
-    "exclusionTag": "seledri"
+    "exclusionTag": "seledri",
+    "foto": "https://images.unsplash.com/photo-1582372288206-a88db541f0e8?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T10",
@@ -333,7 +353,8 @@
     "minGram": 0,
     "maxGram": 60,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T11",
@@ -349,7 +370,8 @@
     "minGram": 0,
     "maxGram": 20,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": "https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "T12",
@@ -365,7 +387,8 @@
     "minGram": 0,
     "maxGram": 30,
     "tagRasa": "gurih",
-    "exclusionTag": "dairy"
+    "exclusionTag": "dairy",
+    "foto": "https://images.unsplash.com/photo-1584450086321-06632ca7faa7?w=200&q=70&auto=format&fit=crop"
   },
   {
     "id": "D01",
@@ -381,7 +404,8 @@
     "minGram": 10,
     "maxGram": 30,
     "tagRasa": "gurih",
-    "exclusionTag": "dairy"
+    "exclusionTag": "dairy",
+    "foto": null
   },
   {
     "id": "D02",
@@ -397,7 +421,8 @@
     "minGram": 10,
     "maxGram": 30,
     "tagRasa": "gurih",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   },
   {
     "id": "D03",
@@ -413,7 +438,8 @@
     "minGram": 10,
     "maxGram": 30,
     "tagRasa": "pedas",
-    "exclusionTag": "dairy"
+    "exclusionTag": "dairy",
+    "foto": null
   },
   {
     "id": "D04",
@@ -429,6 +455,7 @@
     "minGram": 10,
     "maxGram": 30,
     "tagRasa": "segar",
-    "exclusionTag": null
+    "exclusionTag": null,
+    "foto": null
   }
 ]

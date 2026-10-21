@@ -20,6 +20,9 @@ export type SavedOrder = {
   total: number; // Rupiah
   waktuAmbil: string;
   createdAt: string; // ISO timestamp
+  // Opsional: entri lama (sebelum form pengambil ada) tidak punya field ini.
+  namaPengambil?: string;
+  noWhatsApp?: string;
 };
 
 function isSavedOrder(x: unknown): x is SavedOrder {
